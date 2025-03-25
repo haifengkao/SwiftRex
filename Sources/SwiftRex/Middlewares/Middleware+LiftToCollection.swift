@@ -7,7 +7,7 @@ extension MiddlewareProtocol where StateType: Identifiable {
     ) -> LiftToCollectionMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, CollectionState, Self> {
         .init(
             middleware: self,
-            onAction: { partMiddleware, inputAction, actionSource, getState in
+            onAction: { @MainActor partMiddleware, inputAction, actionSource, getState in
                 guard let itemAction = inputActionMap(inputAction) else { return .pure() }
                 let getStateItem = { stateMap(getState()).first(where: { $0.id == itemAction.id }) }
                 guard let itemState = getStateItem() else { return .pure() }
