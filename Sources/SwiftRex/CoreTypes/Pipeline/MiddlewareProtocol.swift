@@ -9,7 +9,7 @@ public protocol MiddlewareProtocol {
     ///
     /// In this case, this action type can be a subset to be lifted to a global action type in order to compose with other middlewares acting on the
     /// global action of an app. Please check <doc:Lifting> for more details.
-    associatedtype InputActionType
+    associatedtype InputActionType: Sendable
 
     /// The Action type that this ``MiddlewareProtocol`` will eventually trigger back to the store in response of side-effects. This can be the same
     /// as ``InputActionType`` or different, in case you want to separate your enum in requests and responses.
@@ -19,7 +19,7 @@ public protocol MiddlewareProtocol {
     ///
     /// In this case, this action type can be a subset to be lifted to a global action type in order to compose with other middlewares acting on the
     /// global action of an app. Please check <doc:Lifting> for more details.
-    associatedtype OutputActionType
+    associatedtype OutputActionType: Sendable
 
     /// The State part that this ``MiddlewareProtocol`` needs to read in order to make decisions. This middleware will be able to read the most
     /// up-to-date ``StateType`` from the store while handling an incoming action, but it can never write or make changes to it.
@@ -29,7 +29,7 @@ public protocol MiddlewareProtocol {
     ///
     /// In this case, this state type can be a subset to be lifted to a global state in order to compose with other middlewares acting on the global state
     /// of an app. Please check <doc:Lifting> for more details.
-    associatedtype StateType
+    associatedtype StateType: Sendable
 
     /// Handles the incoming actions and may or not start async tasks, check the latest state at any point or dispatch additional actions.
     ///
@@ -51,6 +51,7 @@ public protocol MiddlewareProtocol {
     ///   - state: a closure that, once called, will return the most up-to-date state. In the scope of this function, the state wasn't handled by
     ///            reducers yet, but in the context of the ``IO`` block you should expect the state to be changed already.
     /// - Returns: an ``IO`` closure where you can run side-effects and dispatch new actions to the store
+    @MainActor
     func handle(action: InputActionType, from dispatcher: ActionSource, state: @escaping GetState<StateType>) -> IO<OutputActionType>
 }
 
