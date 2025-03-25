@@ -3,15 +3,15 @@ import Foundation
 /// Abstraction over subscriber/observer types from reactive frameworks.
 /// This abstraction uses concept similar to type-erasure or protocol witness pattern, wrapping the behaviour of concrete implementations and
 /// delegating to them once the wrapper funcions are called.
-public struct SubscriberType<Element, ErrorType: Error> {
+public struct SubscriberType<Element, ErrorType: Error>: Sendable {
     /// Closure to handle new values received
-    public let onValue: (Element) -> Void
+    public let onValue: @Sendable (Element) -> Void
 
     /// Closure to handle completion, which has an optional error in case the completion happened due to an error being emitted
-    public let onCompleted: (ErrorType?) -> Void
+    public let onCompleted: @Sendable (ErrorType?) -> Void
 
     /// Closure to handle subscription event
-    public let onSubscribe: (SubscriptionType) -> Void
+    public let onSubscribe: @Sendable (SubscriptionType) -> Void
 
     /// Protocol-witness of a subscriber. Configure the behaviour of this wrapper from a concrete implementation from your favourite reactive
     /// framework.
@@ -19,9 +19,9 @@ public struct SubscriberType<Element, ErrorType: Error> {
     ///   - onValue: Closure to handle new values received
     ///   - onCompleted: Closure to handle completion, which has an optional error in case the completion happened due to an error being emitted
     ///   - onSubscribe: Closure to handle subscription event
-    public init(onValue: ((Element) -> Void)? = nil,
-                onCompleted: ((ErrorType?) -> Void)? = nil,
-                onSubscribe: ((SubscriptionType) -> Void)? = nil) {
+    public init(onValue: (@Sendable (Element) -> Void)? = nil,
+                onCompleted: (@Sendable (ErrorType?) -> Void)? = nil,
+                onSubscribe: (@Sendable (SubscriptionType) -> Void)? = nil) {
         self.onValue = onValue ?? { _ in }
         self.onCompleted = onCompleted ?? { _ in }
         self.onSubscribe = onSubscribe ?? { _ in }
@@ -47,9 +47,9 @@ public typealias UnfailableSubscriberType<Element> = SubscriberType<Element, Nev
 /// Abstraction over publisher/observable/signal producer types from reactive frameworks.
 /// This abstraction uses concept similar to type-erasure or protocol witness pattern, wrapping the behaviour of concrete implementations and
 /// delegating to them once the wrapper funcions are called.
-public struct PublisherType<Element, ErrorType: Error> {
-    public let subscribe: (SubscriberType<Element, ErrorType>) -> SubscriptionType
-    public init(subscribe: @escaping (SubscriberType<Element, ErrorType>) -> SubscriptionType) {
+public struct PublisherType<Element, ErrorType: Error>: Sendable {
+    public let subscribe: @Sendable (SubscriberType<Element, ErrorType>) -> SubscriptionType
+    public init(subscribe: @escaping @Sendable (SubscriberType<Element, ErrorType>) -> SubscriptionType) {
         self.subscribe = subscribe
     }
 
@@ -72,7 +72,7 @@ public struct PublisherType<Element, ErrorType: Error> {
     /// Maps elements emitted by the upstream into a new element type, given by the transform function provided by you
     /// - Parameter transform: a function that transforms each element emitted by the upstream into a new element
     /// - Returns: a derived publisher that emits values of the new type, by applying the transform function provided by you
-    public func map<NewElement>(_ transform: @escaping (Element) -> NewElement) -> PublisherType<NewElement, ErrorType> {
+    public func map<NewElement>(_ transform: @escaping @Sendable (Element) -> NewElement) -> PublisherType<NewElement, ErrorType> {
         .init { subscriber in
             self.subscribe(
                 .init(
@@ -146,7 +146,7 @@ func += <SC: SubscriptionCollection>(_ lhs: inout SC, _ rhs: SubscriptionType) {
 /// Abstraction over passthrough subject types (`PassthroughSubject`, `PublishSubject`, `Signal`) from reactive frameworks.
 /// This abstraction uses concept similar to type-erasure or protocol witness pattern, wrapping the behaviour of concrete implementations and
 /// delegating to them once the wrapper funcions are called.
-public struct SubjectType<Element, ErrorType: Error> {
+public struct SubjectType<Element, ErrorType: Error>: Sendable {
     /// Upstream publisher that feeds events into this subject
     public let publisher: PublisherType<Element, ErrorType>
 
@@ -173,7 +173,7 @@ public typealias UnfailableSubject<Element> = SubjectType<Element, Never>
 /// reactive frameworks.
 /// This abstraction uses concept similar to type-erasure or protocol witness pattern, wrapping the behaviour of concrete implementations and
 /// delegating to them once the wrapper funcions are called.
-public struct ReplayLastSubjectType<Element, ErrorType: Error> {
+public struct ReplayLastSubjectType<Element, ErrorType: Error>: Sendable {
     /// Upstream publisher that feeds data into this subject
     public let publisher: PublisherType<Element, ErrorType>
 
@@ -182,7 +182,7 @@ public struct ReplayLastSubjectType<Element, ErrorType: Error> {
 
     /// Reads the most recent element emitted by this subject. This subject can be seen as a variable in stateful programming style, it holds one
     /// value that can be read at any point using a getter function `() -> Element`. Useful for bridging with the imperative world.
-    public var value: () -> Element
+    public var value: @Sendable () -> Element
 
     /// Creates an abstraction over subject types able to keep the last object (`CurrentValueSubject`, `BehaviorSubject`, `MutableProperty`,
     /// `Variable`) from reactive frameworks.
@@ -195,7 +195,7 @@ public struct ReplayLastSubjectType<Element, ErrorType: Error> {
     public init(
         publisher: PublisherType<Element, ErrorType>,
         subscriber: SubscriberType<Element, ErrorType>,
-        value: @escaping () -> Element) {
+        value: @escaping @Sendable () -> Element) {
         self.publisher = publisher
         self.subscriber = subscriber
         self.value = value
