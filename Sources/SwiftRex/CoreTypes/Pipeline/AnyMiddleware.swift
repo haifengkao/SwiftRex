@@ -2,17 +2,17 @@ import Foundation
 
 /// Erases the protocol `Middleware`. Please check its documentation for more information.
 public struct AnyMiddleware<InputActionType, OutputActionType, StateType>: MiddlewareProtocol {
-    private let _handle: (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>
+    private let _handle: @MainActor (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>
     // It doesn't completely erase the type for identity or composed, for performance reasons
     // That way, when we compose again, we discard identity or flattenize the composed middleware
     let isIdentity: Bool
     let isComposed: ComposedMiddleware<InputActionType, OutputActionType, StateType>?
 
-    public init(handle: @escaping (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>) {
+    public init(handle: @MainActor @escaping (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>) {
         self.init(handle: handle, isIdentity: false)
     }
 
-    private init(handle: @escaping (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>,
+    private init(handle: @MainActor @escaping (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>,
                  isIdentity: Bool) {
         self._handle = handle
         self.isIdentity = isIdentity
