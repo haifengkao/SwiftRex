@@ -16,7 +16,6 @@ where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
         middleware: MiddlewareType,
         emitsValue: ShouldEmitValue<StateType>
     ) {
-        DispatchQueue.setMainQueueID()
         self.state = state
         self.reducer = reducer
         self.middleware = middleware
@@ -28,7 +27,7 @@ where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
     }
 
     private func handleAsap(dispatchedAction: DispatchedAction<ActionType>) {
-        DispatchQueue.asap {
+        Thread.asap {
             let io = Self.handle(
                 middleware: self.middleware,
                 reducer: self.reducer,
@@ -41,6 +40,7 @@ where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
         }
     }
 
+    @MainActor
     private static func handle(
         middleware: MiddlewareType,
         reducer: Reducer<ActionType, StateType>,
@@ -86,5 +86,17 @@ extension ReduxPipelineWrapper where StateType: Equatable {
         middleware: MiddlewareType
     ) {
         self.init(state: state, reducer: reducer, middleware: middleware, emitsValue: .whenDifferent)
+    }
+}
+
+extension Thread {
+    public static func asap(_ block: @MainActor @escaping () -> Void) {
+        if Thread.isMainThread {
+            MainActor.assumeIsolated(block)
+        } else {
+            Task { @MainActor in
+                block()
+            }
+        }
     }
 }
