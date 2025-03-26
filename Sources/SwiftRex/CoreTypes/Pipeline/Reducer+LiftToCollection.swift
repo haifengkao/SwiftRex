@@ -3,8 +3,8 @@ import Foundation
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension Reducer where StateType: Identifiable {
     public func liftToCollection<GlobalAction, GlobalState, CollectionState: MutableCollection>(
-        action actionMap: KeyPath<GlobalAction, ElementIDAction<StateType.ID, ActionType>?>,
-        stateCollection: WritableKeyPath<GlobalState, CollectionState>
+        action actionMap: Sendable & KeyPath<GlobalAction, ElementIDAction<StateType.ID, ActionType>?>,
+        stateCollection: Sendable & WritableKeyPath<GlobalState, CollectionState>
     ) -> Reducer<GlobalAction, GlobalState> where CollectionState.Element == StateType {
         Reducer<GlobalAction, GlobalState>.reduce { action, state in
             guard let itemAction = action[keyPath: actionMap],
@@ -18,9 +18,9 @@ extension Reducer where StateType: Identifiable {
 
 extension Reducer {
     public func liftToCollection<GlobalAction, GlobalState, CollectionState: MutableCollection, ID: Hashable>(
-        action actionMap: KeyPath<GlobalAction, ElementIDAction<ID, ActionType>?>,
-        stateCollection: WritableKeyPath<GlobalState, CollectionState>,
-        identifier: KeyPath<StateType, ID>
+        action actionMap: Sendable & KeyPath<GlobalAction, ElementIDAction<ID, ActionType>?>,
+        stateCollection: Sendable & WritableKeyPath<GlobalState, CollectionState>,
+        identifier: Sendable & KeyPath<StateType, ID>
     ) -> Reducer<GlobalAction, GlobalState> where CollectionState.Element == StateType {
         Reducer<GlobalAction, GlobalState>.reduce { action, state in
             guard let itemAction = action[keyPath: actionMap],
@@ -34,8 +34,8 @@ extension Reducer {
 
 extension Reducer {
     public func liftToCollection<GlobalAction, GlobalState, CollectionState: MutableCollection>(
-        action actionMap: KeyPath<GlobalAction, ElementIndexAction<CollectionState.Index, ActionType>?>,
-        stateCollection: WritableKeyPath<GlobalState, CollectionState>
+        action actionMap: Sendable & KeyPath<GlobalAction, ElementIndexAction<CollectionState.Index, ActionType>?>,
+        stateCollection: Sendable & WritableKeyPath<GlobalState, CollectionState>
     ) -> Reducer<GlobalAction, GlobalState> where CollectionState.Element == StateType {
         Reducer<GlobalAction, GlobalState>.reduce { action, state in
             guard let itemAction = action[keyPath: actionMap],

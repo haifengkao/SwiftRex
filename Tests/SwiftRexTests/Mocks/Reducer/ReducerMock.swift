@@ -1,6 +1,6 @@
 import SwiftRex
 
-let createReducerMock: () -> (Reducer<AppAction, TestState>, ReducerMock<AppAction, TestState>) = {
+let createReducerMock: @Sendable () -> (Reducer<AppAction, TestState>, ReducerMock<AppAction, TestState>) = {
     let mock = ReducerMock<AppAction, TestState>()
 
     return (Reducer.reduce { action, state in
@@ -10,7 +10,7 @@ let createReducerMock: () -> (Reducer<AppAction, TestState>, ReducerMock<AppActi
     }, mock)
 }
 
-class ReducerMock<ActionType, StateType> {
+class ReducerMock<ActionType, StateType>: @unchecked Sendable {
     // MARK: - reduce
 
     var reduceCallsCount = 0

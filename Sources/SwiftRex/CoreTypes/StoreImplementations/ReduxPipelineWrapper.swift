@@ -1,17 +1,17 @@
 import Foundation
 
-public class ReduxPipelineWrapper<MiddlewareType: MiddlewareProtocol>: ActionHandler
+public struct ReduxPipelineWrapper<MiddlewareType: MiddlewareProtocol>: ActionHandler, Sendable
 where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
     public typealias ActionType = MiddlewareType.InputActionType
     public typealias StateType = MiddlewareType.StateType
 
-    private let state: () -> UnfailableReplayLastSubjectType<StateType>
+    private let state: @Sendable () -> UnfailableReplayLastSubjectType<StateType>
     private let reducer: Reducer<ActionType, StateType>
     private let middleware: MiddlewareType
     private let emitsValue: ShouldEmitValue<StateType>
 
     public init(
-        state: @escaping () -> UnfailableReplayLastSubjectType<StateType>,
+        state: @Sendable @escaping () -> UnfailableReplayLastSubjectType<StateType>,
         reducer: Reducer<ActionType, StateType>,
         middleware: MiddlewareType,
         emitsValue: ShouldEmitValue<StateType>
@@ -36,7 +36,7 @@ where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
                 emitsValue: self.emitsValue
             )
 
-            Self.runIO(io, handler: { [weak self] dispatchedAction in self?.dispatch(dispatchedAction) })
+            Self.runIO(io, handler: {  dispatchedAction in self.dispatch(dispatchedAction) })
         }
     }
 
@@ -80,8 +80,8 @@ where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
 }
 
 extension ReduxPipelineWrapper where StateType: Equatable {
-    public convenience init(
-        state: @escaping () -> UnfailableReplayLastSubjectType<StateType>,
+    public init(
+        state: @Sendable @escaping () -> UnfailableReplayLastSubjectType<StateType>,
         reducer: Reducer<ActionType, StateType>,
         middleware: MiddlewareType
     ) {

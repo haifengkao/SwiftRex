@@ -6,7 +6,7 @@
  The only protocol requirement is to offer a property `statePublisher` that will allow other entities to subscribe to state changes and react to
  those.
 */
-public struct AnyStateProvider<StateType>: StateProvider {
+public struct AnyStateProvider<StateType: Sendable>: StateProvider {
     private let publisher: UnfailablePublisherType<StateType>
 
     public init<S: StateProvider>(_ realProvider: S) where S.StateType == StateType {

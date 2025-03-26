@@ -2,7 +2,7 @@ import Foundation
 import SwiftRex
 
 // not thread-safe, for use in test only
-class CurrentValueSubject {
+class CurrentValueSubject: @unchecked Sendable {
     var subject: UnfailableReplayLastSubjectType<TestState>!
     var history: [TestState] = []
     var subscribers: [UUID: SubscriberType<TestState, Never>] = [:]

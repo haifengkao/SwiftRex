@@ -6,7 +6,7 @@
  is generalized by this protocol.
  */
 public protocol ActionHandler {
-    associatedtype ActionType
+    associatedtype ActionType: Sendable
 
     /// The function that allows Views, ViewControllers, Presenters to dispatch actions to the store.
     /// Also way for a `Middleware` to trigger their own actions, usually in response to events or async operations.

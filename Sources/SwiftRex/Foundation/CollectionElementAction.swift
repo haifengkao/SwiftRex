@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ElementIDAction<ID: Hashable, Action> {
+public struct ElementIDAction<ID: Hashable & Sendable, Action: Sendable>: Sendable {
     public let id: ID
     public let action: Action
 

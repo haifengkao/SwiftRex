@@ -1,6 +1,6 @@
 import SwiftRex
 
-let createNameReducer: () -> Reducer<AppAction, TestState> = {
+let createNameReducer: @Sendable () -> Reducer<AppAction, TestState> = {
     .reduce { action, state in
         switch action {
         case .foo: state.name = "foo"

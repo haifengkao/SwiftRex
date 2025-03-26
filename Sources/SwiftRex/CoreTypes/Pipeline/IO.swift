@@ -1,6 +1,6 @@
 import Foundation
 
-public struct IO<OutputActionType> {
+public struct IO<OutputActionType: Sendable> {
     private let runIO: (AnyActionHandler<OutputActionType>) -> Void
 
     public init(_ run: @escaping (AnyActionHandler<OutputActionType>) -> Void) {

@@ -1,5 +1,5 @@
 /// `Reducer` is a pure function wrapped in a monoid container, that takes an action and the current state to calculate the new state.
-public struct Reducer<ActionType, StateType> {
+public struct Reducer<ActionType: Sendable, StateType: Sendable>: Sendable {
     /**
      Execute the wrapped reduce function. You must provide the parameters `action: ActionType` (the action to be
      evaluated during the reducing process) and an `inout` version of the latest `state: StateType`, (the current
@@ -130,9 +130,9 @@ extension Reducer {
                 reducer into a more generic and global reducer, to be used in a larger context.
      */
     public func lift<GlobalActionType, GlobalStateType>(
-        actionGetter: @escaping (GlobalActionType) -> ActionType?,
-        stateGetter: @escaping (GlobalStateType) -> StateType,
-        stateSetter: @escaping (inout GlobalStateType, StateType) -> Void)
+        actionGetter: @Sendable @escaping (GlobalActionType) -> ActionType?,
+        stateGetter: @Sendable @escaping (GlobalStateType) -> StateType,
+        stateSetter: @Sendable @escaping (inout GlobalStateType, StateType) -> Void)
         -> Reducer<GlobalActionType, GlobalStateType> {
         .reduce { globalAction, globalState in
             guard let localAction = actionGetter(globalAction) else { return }
@@ -197,8 +197,8 @@ extension Reducer {
                 reducer into a more generic and global reducer, to be used in a larger context.
      */
     public func lift<GlobalActionType, GlobalStateType>(
-        action: KeyPath<GlobalActionType, ActionType?>,
-        state: WritableKeyPath<GlobalStateType, StateType>)
+        action: Sendable & KeyPath<GlobalActionType, ActionType?>,
+        state: Sendable & WritableKeyPath<GlobalStateType, StateType>)
         -> Reducer<GlobalActionType, GlobalStateType> {
         .reduce { globalAction, globalState in
             guard let localAction = globalAction[keyPath: action] else { return }
@@ -254,7 +254,7 @@ extension Reducer {
                 reducer into a more generic and global reducer, to be used in a larger context.
      */
     public func lift<GlobalStateType>(
-        state: WritableKeyPath<GlobalStateType, StateType>
+        state: Sendable & WritableKeyPath<GlobalStateType, StateType>
     ) -> Reducer<ActionType, GlobalStateType> {
         .reduce { action, globalState in
             self.reduce(action, &globalState[keyPath: state])
@@ -312,7 +312,7 @@ extension Reducer {
                 reducer into a more generic and global reducer, to be used in a larger context.
      */
     public func lift<GlobalActionType>(
-        action: KeyPath<GlobalActionType, ActionType?>)
+        action: Sendable & KeyPath<GlobalActionType, ActionType?>)
         -> Reducer<GlobalActionType, StateType> {
         lift(action: action, state: \.self)
     }

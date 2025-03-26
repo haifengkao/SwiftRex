@@ -2,7 +2,7 @@ import Foundation
 import SwiftRex
 
 // not thread-safe, for use in test only
-class PassthroughSubject<Element> {
+class PassthroughSubject<Element>: @unchecked Sendable {
     var subject: UnfailableSubject<Element>!
     var subscribers: [UUID: SubscriberType<Element, Never>] = [:]
 

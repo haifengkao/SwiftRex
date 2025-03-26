@@ -1,7 +1,7 @@
 import Foundation
 import SwiftRex
 
-enum AppAction: Equatable {
+enum AppAction: Equatable, Sendable {
     case foo
     case bar(Bar)
     case scoped(ElementIDAction<Int, Bar>)
@@ -61,7 +61,7 @@ enum AppAction: Equatable {
     }
 }
 
-enum ActionForScopedTests {
+enum ActionForScopedTests: @unchecked Sendable {
     case toIgnore
     case somethingScopedById(ElementIDAction<Int, String>)
     case somethingScopedByIndex(ElementIndexAction<Int, String>)

@@ -4,7 +4,7 @@ import Foundation
 /// while keeping track about the source of that action. For example, certain RxSwift, Combine or ReactiveSwift pipeline want to send actions to the
 /// store and because ActionHandler has a function `dispatch(_ action: ActionType, from dispatcher: ActionSource)`, that pipeline should output a
 /// `DispatchedAction<Action>` to fulfil everything needed by the ActionHandler to feed that action into the store.
-public struct DispatchedAction<Action> {
+public struct DispatchedAction<Action: Sendable>: Sendable {
     /// The action to be handled by the store
     public let action: Action
 

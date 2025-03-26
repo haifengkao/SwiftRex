@@ -41,7 +41,7 @@ class MiddlewareTests: XCTestCase {
         )
     }
 
-    class SomeMiddleware: MiddlewareProtocol {
+    class SomeMiddleware: MiddlewareProtocol, @unchecked Sendable {
         typealias InputActionType = AppAction
         typealias OutputActionType = AppAction
         typealias StateType = TestState

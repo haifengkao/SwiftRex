@@ -17,7 +17,7 @@ extension StoreType {
     ///            changes
     /// - Returns: a ``StoreProjection`` struct, that uses the original Store under the hood, by applying the required transformations on state and
     ///            action when app state changes or view actions arrive. It doesn't store anything, just proxies the original store.
-    public func projection<ViewAction, ViewState>(
+    public func projection<ViewAction: Sendable, ViewState: Sendable>(
         action viewActionToGlobalAction: @Sendable @escaping (ViewAction) -> ActionType?,
         state globalStateToViewState: @Sendable @escaping (StateType) -> ViewState
     ) -> StoreProjection<ViewAction, ViewState> {

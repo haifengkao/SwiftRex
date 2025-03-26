@@ -2,7 +2,7 @@
 ///
 /// For more information please check the protocol documentation.
 /// The easiest way of creating this type is calling ``StoreType/eraseToAnyStoreType()`` on any store type.
-public struct AnyStoreType<ActionType, StateType>: StoreType {
+public struct AnyStoreType<ActionType: Sendable, StateType: Sendable>: StoreType {
     private let actionHandler: AnyActionHandler<ActionType>
     private let stateProvider: AnyStateProvider<StateType>
 

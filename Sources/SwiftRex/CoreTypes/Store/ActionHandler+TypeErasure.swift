@@ -4,7 +4,7 @@
 /// The only protocol requirement is a function that allows other entities to dispatch actions, so Views (or Presenters,
 /// ViewModels) in your UI layer, or even Middlewares can create actions of a certain type and send to your store, that
 /// is generalized by this protocol.
-public struct AnyActionHandler<ActionType>: ActionHandler {
+public struct AnyActionHandler<ActionType: Sendable>: ActionHandler {
     private let realHandler: (DispatchedAction<ActionType>) -> Void
 
     /// Erases the provided `ActionHandler` by using its inner methods from this wrapper

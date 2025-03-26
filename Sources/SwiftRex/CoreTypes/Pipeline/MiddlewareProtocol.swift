@@ -1,7 +1,7 @@
 /// ``MiddlewareProtocol`` is a plugin, or a composition of several plugins, that are assigned to the app global ``StoreType`` pipeline in order to
 /// handle each action received (``InputActionType``), to execute side-effects in response, and eventually dispatch more actions
 /// (``OutputActionType``) in the process. It can also access the most up-to-date ``StateType`` while handling an incoming action.
-public protocol MiddlewareProtocol {
+public protocol MiddlewareProtocol: Sendable {
     /// The Action type that this ``MiddlewareProtocol`` knows how to handle, so the store will forward actions of this type to this middleware.
     ///
     /// Most of the times middlewares don't need to handle all possible actions from the whole global action tree, so we can decide to allow it to

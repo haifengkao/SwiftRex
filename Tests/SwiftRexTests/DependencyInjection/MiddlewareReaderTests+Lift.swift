@@ -1,6 +1,9 @@
 @testable import SwiftRex
 import XCTest
 
+private func stringify(_ int: Int) -> String { String(int) }
+private func stringify2(_ int: Int) -> String? { String(int) }
+
 // swiftlint:disable file_length
 extension MiddlewareReaderTests {
     private var globalInputActions: [Int] { fiboInts }
@@ -12,8 +15,6 @@ extension MiddlewareReaderTests {
     private var localState: String { hitchhikerString }
     private var localDependencies: String { sheldonsFavoriteString }
     private typealias LocalTestReader = MiddlewareReader<String, MiddlewareMock<String, Int, String>>
-    private func stringify(_ int: Int) -> String { String(int) }
-    private func stringify2(_ int: Int) -> String? { String(int) }
 
     // MARK: - all 4
     @MainActor

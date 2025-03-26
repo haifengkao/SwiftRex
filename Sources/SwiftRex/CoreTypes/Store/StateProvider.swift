@@ -10,7 +10,7 @@
 public protocol StateProvider {
     /// This can be a global state, or a view state that is a not a source-of-truth but only a struct calculated and
     /// derived from a global source-of-truth, without storage to avoid state inconsistency.
-    associatedtype StateType
+    associatedtype StateType: Sendable
 
     /// The state publisher that can be observed by counterparts
     var statePublisher: UnfailablePublisherType<StateType> { get }
