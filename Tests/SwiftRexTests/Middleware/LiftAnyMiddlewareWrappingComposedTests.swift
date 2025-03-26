@@ -1,6 +1,7 @@
 @testable import SwiftRex
 import XCTest
 
+@MainActor
 class LiftAnyMiddlewareWrappingComposedTests: XCTestCase {
 }
 

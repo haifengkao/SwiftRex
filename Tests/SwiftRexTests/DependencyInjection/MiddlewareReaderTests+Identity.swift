@@ -2,6 +2,7 @@
 import XCTest
 
 extension MiddlewareReaderTests {
+    @MainActor
     func testMiddlewareReaderIdentityMiddlewareAction() {
         // Given
         let reader = MiddlewareReader<String, MiddlewareMock<AppAction, AppAction, TestState>>.identity
@@ -28,6 +29,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(0, getStateCount)
     }
 
+    @MainActor
     func testMiddlewareReaderMonoidIdentityMiddlewareAction() {
         // Given
         let state = TestState()

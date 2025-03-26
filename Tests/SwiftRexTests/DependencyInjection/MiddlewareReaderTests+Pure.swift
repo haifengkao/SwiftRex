@@ -2,6 +2,7 @@ import SwiftRex
 import XCTest
 
 extension MiddlewareReaderTests {
+    @MainActor
     func testMiddlewareReaderPure() {
         // Given
         let middleware = MiddlewareMock<String, String, String>()

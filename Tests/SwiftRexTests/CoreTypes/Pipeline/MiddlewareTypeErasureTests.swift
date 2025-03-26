@@ -2,6 +2,7 @@ import Foundation
 @testable import SwiftRex
 import XCTest
 
+@MainActor
 class MiddlewareTypeErasureTests: XCTestCase {
     func testAnyMiddlewareReceivedContext() {
         let middleware = IsoMiddlewareMock<AppAction, TestState>()

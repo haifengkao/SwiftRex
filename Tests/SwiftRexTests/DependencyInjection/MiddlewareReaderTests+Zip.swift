@@ -20,6 +20,7 @@ extension MiddlewareReaderTests {
         }
     }
 
+    @MainActor
     func testMiddlewareReaderZip2() {
         let sut = MiddlewareReader<String, MonoidMiddleware<String, String, String>>.zip(
             reader(middlewares[0]),
@@ -29,6 +30,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual("some dependency 0some dependency 1", sut.inject("some dependency").string)
     }
 
+    @MainActor
     func testMiddlewareReaderZip3() {
         let sut = MiddlewareReader<String, MonoidMiddleware<String, String, String>>.zip(
             reader(middlewares[0]),
@@ -39,6 +41,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual("some dependency 0some dependency 1some dependency 2", sut.inject("some dependency").string)
     }
 
+    @MainActor
     func testMiddlewareReaderZip4() {
         let sut = MiddlewareReader<String, MonoidMiddleware<String, String, String>>.zip(
             reader(middlewares[0]),
@@ -50,6 +53,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual("some dependency 0some dependency 1some dependency 2some dependency 3", sut.inject("some dependency").string)
     }
 
+    @MainActor
     func testMiddlewareReaderZip5() {
         let sut = MiddlewareReader<String, MonoidMiddleware<String, String, String>>.zip(
             reader(middlewares[0]),
@@ -62,6 +66,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual("some dependency 0some dependency 1some dependency 2some dependency 3some dependency 4", sut.inject("some dependency").string)
     }
 
+    @MainActor
     func testMiddlewareReaderZip6() {
         let sut = MiddlewareReader<String, MonoidMiddleware<String, String, String>>.zip(
             reader(middlewares[0]),
@@ -76,6 +81,7 @@ extension MiddlewareReaderTests {
                        sut.inject("some dependency").string)
     }
 
+    @MainActor
     func testMiddlewareReaderZip7() {
         let sut: MiddlewareReader<String, MonoidMiddleware<String, String, String>> =
             MiddlewareReader<String, MonoidMiddleware<String, String, String>>.zip(
@@ -99,6 +105,7 @@ extension MiddlewareReaderTests {
                        sut.inject("some dependency").string)
     }
 
+    @MainActor
     func testMiddlewareReaderZip8() {
         let sut: MiddlewareReader<String, MonoidMiddleware<String, String, String>> =
             MiddlewareReader<String, MonoidMiddleware<String, String, String>>.zip(
@@ -123,6 +130,7 @@ extension MiddlewareReaderTests {
                        sut.inject("some dependency").string)
     }
 
+    @MainActor
     func testMiddlewareReaderZip9() {
         let sut: MiddlewareReader<String, MonoidMiddleware<String, String, String>> =
             MiddlewareReader<String, MonoidMiddleware<String, String, String>>.zip(
@@ -149,6 +157,7 @@ extension MiddlewareReaderTests {
                        sut.inject("some dependency").string)
     }
 
+    @MainActor
     func testMiddlewareReaderZip10() {
         let sut: MiddlewareReader<String, MonoidMiddleware<String, String, String>> =
             MiddlewareReader<String, MonoidMiddleware<String, String, String>>.zip(

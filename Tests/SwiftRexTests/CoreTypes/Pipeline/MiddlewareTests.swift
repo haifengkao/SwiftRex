@@ -2,6 +2,7 @@ import Foundation
 @testable import SwiftRex
 import XCTest
 
+@MainActor
 class MiddlewareTests: XCTestCase {
     func testMiddlewareCallOrder() {
         let state = TestState()

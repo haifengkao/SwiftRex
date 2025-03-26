@@ -2,6 +2,7 @@ import SwiftRex
 import XCTest
 
 extension MiddlewareReaderTests {
+    @MainActor
     func testMiddlewareReaderMap() {
         let original = MiddlewareMock<String, String, String>()
         let mapped = MonoidMiddleware<String, String, String>(string: "a")
@@ -18,6 +19,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(resultingMiddleware.string, "a")
     }
 
+    @MainActor
     func testMiddlewareReaderContramap() {
         let middleware = MiddlewareMock<String, String, String>()
         let originalDependency = 42
@@ -35,6 +37,7 @@ extension MiddlewareReaderTests {
         XCTAssert(resultingMiddleware === middleware)
     }
 
+    @MainActor
     func testMiddlewareReaderDimap() {
         let originalMiddleware = MiddlewareMock<String, String, String>()
         let mappedMiddlware = MonoidMiddleware<String, String, String>(string: "a")
@@ -61,6 +64,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(resultingMiddleware.string, "a")
     }
 
+    @MainActor
     func testMiddlewareReaderFlatmap() {
         let originalMiddleware = MiddlewareMock<String, String, String>()
         let mappedMiddleware = MonoidMiddleware<String, String, String>(string: "a")

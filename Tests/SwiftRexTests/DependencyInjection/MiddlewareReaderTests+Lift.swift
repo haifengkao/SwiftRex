@@ -16,6 +16,7 @@ extension MiddlewareReaderTests {
     private func stringify2(_ int: Int) -> String? { String(int) }
 
     // MARK: - all 4
+    @MainActor
     func testMiddlewareReaderLift_InputAction_OutputAction_State_Dependencies() {
         // Given
         let localState = self.localState
@@ -63,6 +64,7 @@ extension MiddlewareReaderTests {
     }
 
     // MARK: - 3
+    @MainActor
     func testMiddlewareReaderLift_OutputAction_State_Dependencies() {
         // Given
         let localState = self.localState
@@ -108,6 +110,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(receivedLocalInputActions, localInputActions)
     }
 
+    @MainActor
     func testMiddlewareReaderLift_InputAction_State_Dependencies() {
         // Given
         let localState = self.localState
@@ -153,6 +156,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(receivedLocalInputActions, localInputActions)
     }
 
+    @MainActor
     func testMiddlewareReaderLift_InputAction_OutputAction_Dependencies() {
         // Given
         let localState = self.localState
@@ -198,6 +202,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(receivedLocalInputActions, localInputActions)
     }
 
+    @MainActor
     func testMiddlewareReaderLift_InputAction_OutputAction_State() {
         // Given
         let localState = self.localState
@@ -244,6 +249,7 @@ extension MiddlewareReaderTests {
     }
 
     // MARK: - 2
+    @MainActor
     func testMiddlewareReaderLift_InputAction_OutputAction() {
         // Given
         let localState = self.localState
@@ -288,6 +294,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(receivedLocalInputActions, localInputActions)
     }
 
+    @MainActor
     func testMiddlewareReaderLift_InputAction_State() {
         // Given
         let localState = self.localState
@@ -332,6 +339,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(receivedLocalInputActions, localInputActions)
     }
 
+    @MainActor
     func testMiddlewareReaderLift_InputAction_Dependencies() {
         // Given
         let localState = self.localState
@@ -376,6 +384,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(receivedLocalInputActions, localInputActions)
     }
 
+    @MainActor
     func testMiddlewareReaderLift_OutputAction_State() {
         // Given
         let localState = self.localState
@@ -420,6 +429,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(receivedLocalInputActions, localInputActions)
     }
 
+    @MainActor
     func testMiddlewareReaderLift_OutputAction_Dependencies() {
         // Given
         let localState = self.localState
@@ -464,6 +474,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(receivedLocalInputActions, localInputActions)
     }
 
+    @MainActor
     func testMiddlewareReaderLift_State_Dependencies() {
         // Given
         let localState = self.localState
@@ -509,6 +520,7 @@ extension MiddlewareReaderTests {
     }
 
     // MARK: - only 1
+    @MainActor
     func testMiddlewareReaderLift_InputAction() {
         // Given
         let localState = self.localState
@@ -552,6 +564,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(receivedLocalInputActions, localInputActions)
     }
 
+    @MainActor
     func testMiddlewareReaderLift_OutputAction() {
         // Given
         let localState = self.localState
@@ -595,6 +608,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(receivedLocalInputActions, localInputActions)
     }
 
+    @MainActor
     func testMiddlewareReaderLift_State() {
         // Given
         let localState = self.localState
@@ -638,6 +652,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(receivedLocalInputActions, localInputActions)
     }
 
+    @MainActor
     func testMiddlewareReaderLift_Dependencies() {
         // Given
         let localState = self.localState

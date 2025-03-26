@@ -3,6 +3,7 @@ import XCTest
 
 // MARK: - Compose non-monoid
 extension MiddlewareReaderTests {
+    @MainActor
     func testMiddlewareReaderComposedMiddlewareAction() {
         var newActions = [AppAction]()
         let originalActions: [AppAction] = [.foo, .bar(.alpha), .bar(.alpha), .bar(.bravo), .bar(.echo), .foo]
@@ -52,6 +53,7 @@ extension MiddlewareReaderTests {
         XCTAssertEqual(originalActionsReceived.filter { $0.middlewareName == "m2" }.map { $0.action }, originalActions)
     }
 
+    @MainActor
     func testMiddlewareReaderActionHandlerPropagationFromComposedMiddlewareToChildrenComposedViaOperator() {
         let shouldReceiveContext = expectation(description: "context should have been received")
         shouldReceiveContext.expectedFulfillmentCount = 4
@@ -76,6 +78,7 @@ extension MiddlewareReaderTests {
         wait(for: [shouldReceiveContext], timeout: 0.1)
     }
 
+    @MainActor
     func testMiddlewareReaderMiddlewareActionHandlerPropagationFromComposedMiddlewareToChildrenComposedViaAppend() {
         let shouldReceiveContext = expectation(description: "context should have been received")
         shouldReceiveContext.expectedFulfillmentCount = 4
@@ -102,6 +105,7 @@ extension MiddlewareReaderTests {
 
 // MARK: - Compose monoid
 extension MiddlewareReaderTests {
+    @MainActor
     func testMiddlewareReaderComposedMonoidMiddlewareAction() {
         var newActions = [AppAction]()
         let originalActions: [AppAction] = [.foo, .bar(.alpha), .bar(.alpha), .bar(.bravo), .bar(.echo), .foo]

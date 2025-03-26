@@ -1,6 +1,7 @@
 @testable import SwiftRex
 import XCTest
 
+@MainActor
 class IdentityMiddlewareTests: XCTestCase {
     func testIdentityMiddlewareAction() {
         // Given

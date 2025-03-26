@@ -49,7 +49,7 @@ class MiddlewareProtocolMock<InputActionType, OutputActionType, StateType>: Midd
     }
     var handleActionFromStateReceivedArguments: (action: InputActionType, dispatcher: ActionSource, state: GetState<StateType>)?
     var handleActionFromStateReturnValue: IO<OutputActionType>!
-    var handleActionFromStateClosure: ((InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>)?
+    var handleActionFromStateClosure: (@MainActor (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>)?
 
     func handle(action: InputActionType, from dispatcher: ActionSource, state: @escaping GetState<StateType>) -> IO<OutputActionType> {
         handleActionFromStateCallsCount += 1

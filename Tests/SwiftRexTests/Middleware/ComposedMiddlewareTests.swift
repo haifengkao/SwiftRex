@@ -1,6 +1,7 @@
 @testable import SwiftRex
 import XCTest
 
+@MainActor
 class ComposedMiddlewareTests: XCTestCase {
     func testComposedMiddlewareAction() {
         var sut = ComposedMiddleware<AppAction, AppAction, TestState>()
