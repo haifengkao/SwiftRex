@@ -5,7 +5,7 @@ import XCTest
 class ReduxStoreBaseTests: XCTestCase {
     // swiftlint:disable function_body_length
     // swiftlint:disable cyclomatic_complexity
-    func testStoreFullWorkflowIntegration() {
+    @MainActor func testStoreFullWorkflowIntegration() {
         let shouldCallFooMiddleware = expectation(description: "foo middleware should have been called 2 times")
         shouldCallFooMiddleware.expectedFulfillmentCount = 2
         let shouldCallBarMiddleware = expectation(description: "bar middleware should have been called 9 times")
@@ -82,22 +82,32 @@ class ReduxStoreBaseTests: XCTestCase {
 
         // receiveContext uses DispatchQueue.main.async, but handle uses DispatchQueue.asap
         // the behavior is different
-        var count = 0
-        _ = store.statePublisher.subscribe(SubscriberType(onValue: { value in
-            shouldNotifySubscribers.fulfill()
-            switch count {
-            case 0: XCTAssertEqual("_foo", value.name)
-            case 1: XCTAssertEqual("_foo_bravo", value.name)
-            case 2: XCTAssertEqual("_foo_bravo_charlie", value.name)
-            case 3: XCTAssertEqual("_foo_bravo_charlie_alpha", value.name)
-            case 4: XCTAssertEqual("_foo_bravo_charlie_alpha_foo", value.name)
-            case 5: XCTAssertEqual("_foo_bravo_charlie_alpha_foo_bravo", value.name)
-            case 6: XCTAssertEqual("_foo_bravo_charlie_alpha_foo_bravo_delta", value.name)
-            case 7: XCTAssertEqual("_foo_bravo_charlie_alpha_foo_bravo_delta_echo", value.name)
-            case 8: XCTAssertEqual("_foo_bravo_charlie_alpha_foo_bravo_delta_echo_echo", value.name)
-            default: XCTFail("Called more times than expected")
+        actor Counter {
+            var count = 0
+            func increment() -> Int {
+                count += 1
+                return count - 1
             }
-            count += 1
+        }
+        let counter = Counter()
+        
+        _ = store.statePublisher.subscribe(SubscriberType(onValue: { [counter] value in
+            Task {
+                let count = await counter.increment()
+                shouldNotifySubscribers.fulfill()
+                switch count {
+                case 0: XCTAssertEqual("_foo", value.name)
+                case 1: XCTAssertEqual("_foo_bravo", value.name)
+                case 2: XCTAssertEqual("_foo_bravo_charlie", value.name)
+                case 3: XCTAssertEqual("_foo_bravo_charlie_alpha", value.name)
+                case 4: XCTAssertEqual("_foo_bravo_charlie_alpha_foo", value.name)
+                case 5: XCTAssertEqual("_foo_bravo_charlie_alpha_foo_bravo", value.name)
+                case 6: XCTAssertEqual("_foo_bravo_charlie_alpha_foo_bravo_delta", value.name)
+                case 7: XCTAssertEqual("_foo_bravo_charlie_alpha_foo_bravo_delta_echo", value.name)
+                case 8: XCTAssertEqual("_foo_bravo_charlie_alpha_foo_bravo_delta_echo_echo", value.name)
+                default: XCTFail("Called more times than expected")
+                }
+            }
         }, onCompleted: { error in XCTFail("Unexpected completion. Error? \(String(describing: error))") }))
 
         events.forEach { store.dispatch($0, from: .here()) }

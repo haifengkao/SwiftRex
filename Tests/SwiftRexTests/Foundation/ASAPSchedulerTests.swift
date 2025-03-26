@@ -170,21 +170,45 @@ class ASAPSchedulerTests: XCTestCase {
         call1.expectedFulfillmentCount = 2
         call1.assertForOverFulfill = true
         let call2 = expectation(description: "2")
-        var timerHandle: Cancellable?
+        
+        actor TimerManager {
+            var timerHandle: Cancellable?
+            
+            func setTimer(_ timer: Cancellable) {
+                timerHandle = timer
+            }
+            
+            func cancelTimer() {
+                timerHandle?.cancel()
+                timerHandle = nil
+            }
+        }
+        
+        let timerManager = TimerManager()
 
         DispatchQueue.main.async {
             DispatchQueue.global().async {
                 XCTAssertFalse(DispatchQueue.isMainQueue)
                 XCTAssertFalse(Thread.isMainThread)
 
-                timerHandle = scheduler.schedule(after: scheduler.now.advanced(by: .milliseconds(5)),
-                                                 interval: .milliseconds(60),
-                                                 tolerance: .zero,
-                                                 options: .init()) {
-                    XCTAssert(DispatchQueue.isMainQueue)
-                    XCTAssert(Thread.isMainThread)
-                    call1.fulfill()
+                // Use @Sendable to ensure timer is properly isolated
+                let timerClosure = { @Sendable in
+                    scheduler.schedule(after: scheduler.now.advanced(by: .milliseconds(5)),
+                                               interval: .milliseconds(60),
+                                               tolerance: .zero,
+                                               options: .init()) {
+                        XCTAssert(DispatchQueue.isMainQueue)
+                        XCTAssert(Thread.isMainThread)
+                        call1.fulfill()
+                    }
                 }
+                
+                // Create timer in an async context that can safely transfer it to the actor
+                Task {
+                    let timer = timerClosure()
+                    await timerManager.setTimer(timer)
+                }
+                
                 XCTAssertFalse(DispatchQueue.isMainQueue)
                 XCTAssertFalse(Thread.isMainThread)
                 call2.fulfill()
@@ -192,6 +216,9 @@ class ASAPSchedulerTests: XCTestCase {
         }
 
         wait(for: [call2, call1], timeout: 0.1, enforceOrder: true)
-        timerHandle?.cancel()
+        
+        Task {
+            await timerManager.cancelTimer()
+        }
     }
 }

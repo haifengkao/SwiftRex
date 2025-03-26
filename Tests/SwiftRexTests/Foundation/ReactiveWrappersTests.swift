@@ -6,7 +6,7 @@ class ReactiveWrappersTests: XCTestCase {
     // MARK: - Subscriber
     func testSubscriberTypeOnValue() {
         let shouldCallClosure = expectation(description: "Closure should be called")
-        let onValue: (String) -> Void = { string in
+        let onValue: @Sendable (String) -> Void = { string in
             XCTAssertEqual("test", string)
             shouldCallClosure.fulfill()
         }
@@ -22,7 +22,7 @@ class ReactiveWrappersTests: XCTestCase {
     func testSubscriberTypeOnError() {
         let shouldCallClosure = expectation(description: "Closure should be called")
         let someError = SomeError()
-        let onError: (Error?) -> Void = { error in
+        let onError: @Sendable (Error?) -> Void = { error in
             XCTAssertEqual(someError, error as! SomeError)
             shouldCallClosure.fulfill()
         }
@@ -37,7 +37,7 @@ class ReactiveWrappersTests: XCTestCase {
 
     func testSubscriberTypeAssertNoFailureOnValue() {
         let shouldCallClosure = expectation(description: "Closure should be called")
-        let onError: (Error?) -> Void = { never in
+        let onError: @Sendable (Error?) -> Void = { never in
             XCTAssertNil(never)
             shouldCallClosure.fulfill()
         }
@@ -54,11 +54,11 @@ class ReactiveWrappersTests: XCTestCase {
         let shouldCallClosureValue = expectation(description: "Closure value should be called")
         let shouldCallClosureError = expectation(description: "Closure error should be called")
         let someError = SomeError()
-        let onValue: (String) -> Void = { string in
+        let onValue: @Sendable (String) -> Void = { string in
             XCTAssertEqual(string, "a")
             shouldCallClosureValue.fulfill()
         }
-        let onError: (Error?) -> Void = { error in
+        let onError: @Sendable (Error?) -> Void = { error in
             XCTAssertEqual(someError, error as! SomeError)
             shouldCallClosureError.fulfill()
         }
@@ -302,15 +302,26 @@ class ReactiveWrappersTests: XCTestCase {
     func testReplaySubjectTypeMutate() {
         let shouldCallClosure = expectation(description: "Closure should be called")
         shouldCallClosure.expectedFulfillmentCount = 2
-        var time = 1
-        let subscriberType = SubscriberType<String, Error>(onValue: { string in
-            switch time {
-            case 1: XCTAssertEqual(string, "initial")
-            case 2: XCTAssertEqual(string, "changed")
-            default: XCTFail("Called too many times")
+        
+        actor TimeCounter {
+            var time = 1
+            func increment() -> Int {
+                defer { time += 1 }
+                return time
             }
-            shouldCallClosure.fulfill()
-            time += 1
+        }
+        let timeCounter = TimeCounter()
+        
+        let subscriberType = SubscriberType<String, Error>(onValue: { [timeCounter] string in
+            Task {
+                let currentTime = await timeCounter.increment()
+                switch currentTime {
+                case 1: XCTAssertEqual(string, "initial")
+                case 2: XCTAssertEqual(string, "changed")
+                default: XCTFail("Called too many times")
+                }
+                shouldCallClosure.fulfill()
+            }
         })
 
         let publisherType = PublisherType<String, Error> { subscriber in
@@ -340,15 +351,26 @@ class ReactiveWrappersTests: XCTestCase {
     func testReplaySubjectTypeMutateWhenTrue() {
         let shouldCallClosure = expectation(description: "Closure should be called")
         shouldCallClosure.expectedFulfillmentCount = 2
-        var time = 1
-        let subscriberType = SubscriberType<String, Error>(onValue: { string in
-            switch time {
-            case 1: XCTAssertEqual(string, "initial")
-            case 2: XCTAssertEqual(string, "changed")
-            default: XCTFail("Called too many times")
+        
+        actor TimeCounter {
+            var time = 1
+            func increment() -> Int {
+                defer { time += 1 }
+                return time
             }
-            shouldCallClosure.fulfill()
-            time += 1
+        }
+        let timeCounter = TimeCounter()
+        
+        let subscriberType = SubscriberType<String, Error>(onValue: { [timeCounter] string in
+            Task {
+                let currentTime = await timeCounter.increment()
+                switch currentTime {
+                case 1: XCTAssertEqual(string, "initial")
+                case 2: XCTAssertEqual(string, "changed")
+                default: XCTFail("Called too many times")
+                }
+                shouldCallClosure.fulfill()
+            }
         })
 
         let publisherType = PublisherType<String, Error> { subscriber in
@@ -381,14 +403,25 @@ class ReactiveWrappersTests: XCTestCase {
     func testReplaySubjectTypeMutateWhenIsFalse() {
         let shouldCallClosure = expectation(description: "Closure should be called")
         shouldCallClosure.expectedFulfillmentCount = 1
-        var time = 1
-        let subscriberType = SubscriberType<String, Error>(onValue: { string in
-            switch time {
-            case 1: XCTAssertEqual(string, "initial")
-            default: XCTFail("Called too many times")
+        
+        actor TimeCounter {
+            var time = 1
+            func increment() -> Int {
+                defer { time += 1 }
+                return time
             }
-            shouldCallClosure.fulfill()
-            time += 1
+        }
+        let timeCounter = TimeCounter()
+        
+        let subscriberType = SubscriberType<String, Error>(onValue: { [timeCounter] string in
+            Task {
+                let currentTime = await timeCounter.increment()
+                switch currentTime {
+                case 1: XCTAssertEqual(string, "initial")
+                default: XCTFail("Called too many times")
+                }
+                shouldCallClosure.fulfill()
+            }
         })
 
         let publisherType = PublisherType<String, Error> { subscriber in
