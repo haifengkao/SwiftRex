@@ -5,11 +5,14 @@ let package = Package(
     name: "SwiftRex",
     platforms: [.macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6)],
     products: [
-        .library(name: "ReactiveSwiftRex", targets: ["SwiftRex", "ReactiveSwiftRex"]),
-        .library(name: "RxSwiftRex", targets: ["SwiftRex", "RxSwiftRex"]),
+         .library(name: "SwiftRex", targets: ["SwiftRex"]),
+        // .library(name: "CombineRex", targets: ["SwiftRex", "CombineRex"]),
+        // .library(name: "ReactiveSwiftRex", targets: ["SwiftRex", "ReactiveSwiftRex"]),
+        // .library(name: "RxSwiftRex", targets: ["SwiftRex", "RxSwiftRex"]),
 
-        .library(name: "ReactiveSwiftRexDynamic", type: .dynamic, targets: ["SwiftRex", "ReactiveSwiftRex"]),
-        .library(name: "RxSwiftRexDynamic", type: .dynamic, targets: ["SwiftRex", "RxSwiftRex"])
+        // .library(name: "CombineRexDynamic", type: .dynamic, targets: ["SwiftRex", "CombineRex"]),
+        // .library(name: "ReactiveSwiftRexDynamic", type: .dynamic, targets: ["SwiftRex", "ReactiveSwiftRex"]),
+        // .library(name: "RxSwiftRexDynamic", type: .dynamic, targets: ["SwiftRex", "RxSwiftRex"])
     ],
     dependencies: [
         .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.2.0"),
@@ -20,10 +23,14 @@ let package = Package(
             name: "SwiftRex",
             exclude: ["CodeGeneration/Templates"]
         ),
-        .target(name: "ReactiveSwiftRex", dependencies: ["SwiftRex", "ReactiveSwift"]),
-        .target(name: "RxSwiftRex", dependencies: ["SwiftRex", "RxSwift"]),
+        // .target(name: "CombineRex", dependencies: ["SwiftRex"]),
+        // .target(name: "ReactiveSwiftRex", dependencies: ["SwiftRex", "ReactiveSwift"]),
+        // .target(name: "RxSwiftRex", dependencies: ["SwiftRex", "RxSwift"]),
 
         .testTarget(name: "SwiftRexTests", dependencies: ["SwiftRex"]),
+        // .testTarget(name: "CombineRexTests", dependencies: ["CombineRex"]),
+        // .testTarget(name: "ReactiveSwiftRexTests", dependencies: ["ReactiveSwiftRex"]),
+        // .testTarget(name: "RxSwiftRexTests", dependencies: ["RxSwiftRex"])
     ],
     swiftLanguageModes: [.v6]
 )
