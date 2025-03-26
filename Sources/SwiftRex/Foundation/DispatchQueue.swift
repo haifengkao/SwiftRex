@@ -16,9 +16,11 @@ extension DispatchQueue {
         DispatchQueue.main.setSpecific(key: DispatchQueue.dispatchSpecificKey, value: DispatchQueue.dispatchSpecificValue)
     }
 
-    public static func asap(_ block: @escaping () -> Void) {
+    public static func asap(_ block: @MainActor @escaping () -> Void) {
         if DispatchQueue.isMainQueue {
-            block()
+            MainActor.assumeIsolated {
+                block()
+            }
         } else {
             DispatchQueue.main.async {
                 block()
