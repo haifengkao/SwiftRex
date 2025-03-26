@@ -14,13 +14,13 @@ public struct LiftToCollectionMiddleware<
     PartMiddleware: MiddlewareProtocol>: MiddlewareProtocol
 where PartMiddleware.StateType: Identifiable, CollectionState.Element == PartMiddleware.StateType {
     private let partMiddleware: PartMiddleware
-    private var actionHandler: (PartMiddleware,
+    private var actionHandler: @MainActor (PartMiddleware,
                                 GlobalInputActionType,
                                 ActionSource,
                                 @escaping GetState<GlobalStateType>) -> IO<GlobalOutputActionType>
 
     init(middleware: PartMiddleware,
-         onAction: @escaping (PartMiddleware, GlobalInputActionType, ActionSource, @escaping GetState<GlobalStateType>) -> IO<GlobalOutputActionType>
+         onAction:  @MainActor @escaping (PartMiddleware, GlobalInputActionType, ActionSource, @escaping GetState<GlobalStateType>) -> IO<GlobalOutputActionType>
     ) {
         self.partMiddleware = middleware
         self.actionHandler = onAction

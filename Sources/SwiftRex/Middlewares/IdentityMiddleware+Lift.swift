@@ -1,35 +1,35 @@
 extension IdentityMiddleware {
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
-        inputAction: @escaping (GlobalInputActionType) -> InputActionType?,
+        inputAction: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
         outputAction: @escaping (OutputActionType) -> GlobalOutputActionType,
-        state: @escaping (GlobalStateType) -> StateType
+        state: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> IdentityMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType> {
         .init()
     }
 
     public func lift<GlobalOutputActionType, GlobalStateType>(
         outputAction: @escaping (OutputActionType) -> GlobalOutputActionType,
-        state: @escaping (GlobalStateType) -> StateType
+        state: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> IdentityMiddleware<InputActionType, GlobalOutputActionType, GlobalStateType> {
         .init()
     }
 
     public func lift<GlobalInputActionType, GlobalStateType>(
-        inputAction: @escaping (GlobalInputActionType) -> InputActionType?,
-        state: @escaping (GlobalStateType) -> StateType
+        inputAction: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
+        state: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> IdentityMiddleware<GlobalInputActionType, OutputActionType, GlobalStateType> {
         .init()
     }
 
     public func lift<GlobalInputActionType, GlobalOutputActionType>(
-        inputAction: @escaping (GlobalInputActionType) -> InputActionType?,
+        inputAction: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
         outputAction: @escaping (OutputActionType) -> GlobalOutputActionType
     ) -> IdentityMiddleware<GlobalInputActionType, GlobalOutputActionType, StateType> {
         .init()
     }
 
     public func lift<GlobalInputActionType>(
-        inputAction: @escaping (GlobalInputActionType) -> InputActionType?
+        inputAction: @escaping @Sendable (GlobalInputActionType) -> InputActionType?
     ) -> IdentityMiddleware<GlobalInputActionType, OutputActionType, StateType> {
         .init()
     }
@@ -41,7 +41,7 @@ extension IdentityMiddleware {
     }
 
     public func lift<GlobalStateType>(
-        state: @escaping (GlobalStateType) -> StateType
+        state: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> IdentityMiddleware<InputActionType, OutputActionType, GlobalStateType> {
         .init()
     }

@@ -14,14 +14,14 @@ public struct LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, Glob
     typealias LocalStateType = PartMiddleware.StateType
 
     private let partMiddleware: PartMiddleware
-    private let inputActionMap: (GlobalInputActionType) -> LocalInputActionType?
-    private let outputActionMap: (LocalOutputActionType) -> GlobalOutputActionType
-    private let stateMap: (GlobalStateType) -> LocalStateType
+    private let inputActionMap: @Sendable (GlobalInputActionType) -> LocalInputActionType?
+    private let outputActionMap: @Sendable (LocalOutputActionType) -> GlobalOutputActionType
+    private let stateMap: @Sendable (GlobalStateType) -> LocalStateType
 
     init(middleware: PartMiddleware,
-         inputActionMap: @escaping (GlobalInputActionType) -> PartMiddleware.InputActionType?,
-         outputActionMap: @escaping (PartMiddleware.OutputActionType) -> GlobalOutputActionType,
-         stateMap: @escaping (GlobalStateType) -> PartMiddleware.StateType) {
+         inputActionMap: @escaping @Sendable (GlobalInputActionType) -> PartMiddleware.InputActionType?,
+         outputActionMap: @escaping @Sendable (PartMiddleware.OutputActionType) -> GlobalOutputActionType,
+         stateMap: @escaping @Sendable (GlobalStateType) -> PartMiddleware.StateType) {
         self.inputActionMap = inputActionMap
         self.outputActionMap = outputActionMap
         self.stateMap = stateMap
@@ -44,21 +44,22 @@ public struct LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, Glob
        - state: a closure to obtain the most recent state
      - Returns: possible Side-Effects wrapped in an IO struct
      */
-    public func handle(action: GlobalInputActionType, from dispatcher: ActionSource, state: @escaping GetState<GlobalStateType>)
+    public func handle(action: GlobalInputActionType, from dispatcher: ActionSource, state: @escaping @Sendable GetState<GlobalStateType>)
     -> IO<GlobalOutputActionType> {
         guard let localAction: LocalInputActionType = inputActionMap(action) else {
             // This middleware doesn't care about this action type
             return .pure()
         }
 
+        let localStateMap = stateMap
         return partMiddleware
-            .handle(action: localAction, from: dispatcher, state: { self.stateMap(state()) })
+            .handle(action: localAction, from: dispatcher, state: { localStateMap(state()) })
             .map(outputActionMap)
     }
 }
 
 /// a little helper to compose two functions
 // swiftlint:disable:next identifier_name
-private func andThen<A, B>(_ f: @escaping () -> A, _ g: @escaping (A) -> B) -> () -> B {
+private func andThen<A, B>(_ f: @escaping @Sendable () -> A, _ g: @escaping @Sendable (A) -> B) -> @Sendable () -> B {
     { g(f()) }
 }

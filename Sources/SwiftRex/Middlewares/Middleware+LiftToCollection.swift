@@ -1,7 +1,7 @@
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension MiddlewareProtocol where StateType: Identifiable {
     public func liftToCollection<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, CollectionState: MutableCollection>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> ElementIDAction<StateType.ID, InputActionType>?,
+        inputAction inputActionMap: @Sendable @escaping (GlobalInputActionType) -> ElementIDAction<StateType.ID, InputActionType>?,
         outputAction outputActionMap: @escaping (ElementIDAction<StateType.ID, OutputActionType>) -> GlobalOutputActionType,
         state stateMap: @escaping (GlobalStateType) -> CollectionState
     ) -> LiftToCollectionMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, CollectionState, Self> {
@@ -12,7 +12,7 @@ extension MiddlewareProtocol where StateType: Identifiable {
                 let getStateItem = { stateMap(getState()).first(where: { $0.id == itemAction.id }) }
                 guard let itemState = getStateItem() else { return .pure() }
 
-                let getState = { getStateItem() ?? itemState }
+                let getState: @Sendable () -> StateType = { getStateItem() ?? itemState }
 
                 return partMiddleware.handle(action: itemAction.action, from: actionSource, state: getState)
                     .map { (outputAction: Self.OutputActionType) -> GlobalOutputActionType in
@@ -34,7 +34,7 @@ extension MiddlewareProtocol where StateType: Identifiable, InputActionType == O
             let getStateItem = { getState()[keyPath: stateCollection].first(where: { $0.id == itemAction.id }) }
             guard let itemState = getStateItem() else { return .pure() }
 
-            let getState = { getStateItem() ?? itemState }
+            let getState: @Sendable () -> StateType = { getStateItem() ?? itemState }
 
             return partMiddleware.handle(action: itemAction.action,
                                          from: actionSource,

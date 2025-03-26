@@ -1,8 +1,8 @@
 extension AnyMiddleware {
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType,
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType,
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> AnyMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType> {
         if isIdentity { return IdentityMiddleware().eraseToAnyMiddleware() }
 
@@ -23,8 +23,8 @@ extension AnyMiddleware {
     }
 
     public func lift<GlobalOutputActionType, GlobalStateType>(
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType,
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType,
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> AnyMiddleware<InputActionType, GlobalOutputActionType, GlobalStateType> {
         if isIdentity { return IdentityMiddleware().eraseToAnyMiddleware() }
 
@@ -44,8 +44,8 @@ extension AnyMiddleware {
     }
 
     public func lift<GlobalInputActionType, GlobalStateType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> AnyMiddleware<GlobalInputActionType, OutputActionType, GlobalStateType> {
         if isIdentity { return IdentityMiddleware().eraseToAnyMiddleware() }
 
@@ -65,8 +65,8 @@ extension AnyMiddleware {
     }
 
     public func lift<GlobalInputActionType, GlobalOutputActionType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType
     ) -> AnyMiddleware<GlobalInputActionType, GlobalOutputActionType, StateType> {
         if isIdentity { return IdentityMiddleware().eraseToAnyMiddleware() }
 
@@ -86,7 +86,7 @@ extension AnyMiddleware {
     }
 
     public func lift<GlobalInputActionType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?
     ) -> AnyMiddleware<GlobalInputActionType, OutputActionType, StateType> {
         if isIdentity { return IdentityMiddleware().eraseToAnyMiddleware() }
 
@@ -105,7 +105,7 @@ extension AnyMiddleware {
     }
 
     public func lift<GlobalOutputActionType>(
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType
     ) -> AnyMiddleware<InputActionType, GlobalOutputActionType, StateType> {
         if isIdentity { return IdentityMiddleware().eraseToAnyMiddleware() }
 
@@ -124,7 +124,7 @@ extension AnyMiddleware {
     }
 
     public func lift<GlobalStateType>(
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> AnyMiddleware<InputActionType, OutputActionType, GlobalStateType> {
         if isIdentity { return IdentityMiddleware().eraseToAnyMiddleware() }
 

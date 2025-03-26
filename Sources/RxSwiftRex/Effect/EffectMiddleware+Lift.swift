@@ -6,7 +6,7 @@ import SwiftRex
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension EffectMiddleware {
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
+        inputAction inputActionMap: @Sendable @escaping (GlobalInputActionType) -> InputActionType?,
         outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType,
         state stateMap: @escaping (GlobalStateType) -> StateType
     ) -> EffectMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, Dependencies> {
@@ -21,7 +21,7 @@ extension EffectMiddleware {
     }
 
     public func lift<GlobalInputActionType, GlobalOutputActionType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
+        inputAction inputActionMap: @Sendable @escaping (GlobalInputActionType) -> InputActionType?,
         outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType
     ) -> EffectMiddleware<GlobalInputActionType, GlobalOutputActionType, StateType, Dependencies> {
         EffectMiddleware<GlobalInputActionType, GlobalOutputActionType, StateType, Dependencies>(
@@ -35,7 +35,7 @@ extension EffectMiddleware {
     }
 
     public func lift<GlobalInputActionType, GlobalStateType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
+        inputAction inputActionMap: @Sendable @escaping (GlobalInputActionType) -> InputActionType?,
         state stateMap: @escaping (GlobalStateType) -> StateType
     ) -> EffectMiddleware<GlobalInputActionType, OutputActionType, GlobalStateType, Dependencies> {
         EffectMiddleware<GlobalInputActionType, OutputActionType, GlobalStateType, Dependencies>(
@@ -61,7 +61,7 @@ extension EffectMiddleware {
     }
 
     public func lift<GlobalInputActionType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?
+        inputAction inputActionMap: @Sendable @escaping (GlobalInputActionType) -> InputActionType?
     ) -> EffectMiddleware<GlobalInputActionType, OutputActionType, StateType, Dependencies> {
         EffectMiddleware<GlobalInputActionType, OutputActionType, StateType, Dependencies>(
             dependencies: self.dependencies,

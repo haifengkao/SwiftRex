@@ -29,7 +29,7 @@ extension StoreType {
     ///   - transform: a closure that will be executed every time the state changes in the original store, so we can map it into the state type
     ///                expected by the subscribers of the proxy ``StoreType``.
     /// - Returns: an ``AnyStoreType`` with same `ActionType` but different `StateType` than the original store.
-    public func mapState<NewStateType>(_ transform: @escaping (StateType) -> NewStateType)
+    public func mapState<NewStateType>(_ transform: @Sendable @escaping (StateType) -> NewStateType)
     -> AnyStoreType<ActionType, NewStateType> {
         AnyStoreType(
             action: self.dispatch,

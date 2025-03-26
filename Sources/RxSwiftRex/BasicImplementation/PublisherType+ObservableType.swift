@@ -2,7 +2,7 @@ import Foundation
 import RxSwift
 import SwiftRex
 
-extension PublisherType: ObservableConvertibleType, ObservableType {
+extension PublisherType: @retroactive ObservableConvertibleType, @retroactive ObservableType {
     public func subscribe<Observer>(_ observer: Observer) -> Disposable
         where Observer: ObserverType, Element == Observer.Element {
         let subscriber: SubscriberType<Element, ErrorType> = .init(
@@ -29,7 +29,7 @@ extension ObservableType {
 }
 
 extension PublisherType {
-    public static func lift<FromElement>(_ transform: @escaping (FromElement) -> Element) -> (PublisherType<FromElement, Error>)
+    public static func lift<FromElement>(_ transform: @Sendable @escaping (FromElement) -> Element) -> (PublisherType<FromElement, Error>)
     -> PublisherType<Element, Error> { { originalPublisher in
             originalPublisher.map(transform).asPublisherType()
         }

@@ -91,12 +91,12 @@ public typealias SymmetricalEffectMiddleware<Action, State, Dependencies> = Effe
 public final class EffectMiddleware<InputActionType, OutputActionType, StateType, Dependencies>: MiddlewareProtocol {
     var cancellables = [Int: Lifetime.Token]()
     private var cancellableButNotViaToken = CompositeDisposable()
-    private var actionHandler: (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>
+    private var actionHandler: @MainActor (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>
     let dependencies: Dependencies
 
     init(
         dependencies: Dependencies,
-        onAction: @escaping (InputActionType, ActionSource, @escaping GetState<StateType>) -> Effect<Dependencies, OutputActionType>
+        onAction: @MainActor @escaping (InputActionType, ActionSource, @escaping GetState<StateType>) -> Effect<Dependencies, OutputActionType>
     ) {
         self.dependencies = dependencies
         self.actionHandler = { _, _, _ in .pure() }
@@ -112,7 +112,7 @@ public final class EffectMiddleware<InputActionType, OutputActionType, StateType
 
     init(
         dependencies: Dependencies,
-        actionHandler: @escaping (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>
+        actionHandler: @MainActor @escaping (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>
     ) {
         self.dependencies = dependencies
         self.actionHandler = actionHandler
@@ -200,7 +200,7 @@ extension EffectMiddleware: Semigroup {
     public static func <> (lhs: EffectMiddleware, rhs: EffectMiddleware) -> EffectMiddleware {
         EffectMiddleware(
             dependencies: lhs.dependencies,
-            actionHandler: { action, dispatcher, getState in
+            actionHandler: { @MainActor action, dispatcher, getState in
                 let io1 = lhs.handle(action: action, from: dispatcher, state: getState)
                 let io2 = rhs.handle(action: action, from: dispatcher, state: getState)
 

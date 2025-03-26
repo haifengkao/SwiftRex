@@ -1,8 +1,8 @@
 extension ComposedMiddleware {
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType,
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType,
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> ComposedMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType> {
         var composed = ComposedMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>()
 
@@ -18,8 +18,8 @@ extension ComposedMiddleware {
     }
 
     public func lift<GlobalOutputActionType, GlobalStateType>(
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType,
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType,
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> ComposedMiddleware<InputActionType, GlobalOutputActionType, GlobalStateType> {
         var composed = ComposedMiddleware<InputActionType, GlobalOutputActionType, GlobalStateType>()
 
@@ -34,8 +34,8 @@ extension ComposedMiddleware {
     }
 
     public func lift<GlobalInputActionType, GlobalStateType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> ComposedMiddleware<GlobalInputActionType, OutputActionType, GlobalStateType> {
         var composed = ComposedMiddleware<GlobalInputActionType, OutputActionType, GlobalStateType>()
 
@@ -50,8 +50,8 @@ extension ComposedMiddleware {
     }
 
     public func lift<GlobalInputActionType, GlobalOutputActionType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType
     ) -> ComposedMiddleware<GlobalInputActionType, GlobalOutputActionType, StateType> {
         var composed = ComposedMiddleware<GlobalInputActionType, GlobalOutputActionType, StateType>()
 
@@ -66,7 +66,7 @@ extension ComposedMiddleware {
     }
 
     public func lift<GlobalInputActionType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?
     ) -> ComposedMiddleware<GlobalInputActionType, OutputActionType, StateType> {
         var composed = ComposedMiddleware<GlobalInputActionType, OutputActionType, StateType>()
 
@@ -80,7 +80,7 @@ extension ComposedMiddleware {
     }
 
     public func lift<GlobalOutputActionType>(
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType
     ) -> ComposedMiddleware<InputActionType, GlobalOutputActionType, StateType> {
         var composed = ComposedMiddleware<InputActionType, GlobalOutputActionType, StateType>()
 
@@ -94,7 +94,7 @@ extension ComposedMiddleware {
     }
 
     public func lift<GlobalStateType>(
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> ComposedMiddleware<InputActionType, OutputActionType, GlobalStateType> {
         var composed = ComposedMiddleware<InputActionType, OutputActionType, GlobalStateType>()
 

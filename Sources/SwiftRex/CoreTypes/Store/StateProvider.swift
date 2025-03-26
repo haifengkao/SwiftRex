@@ -17,7 +17,7 @@ public protocol StateProvider {
 }
 
 extension StateProvider {
-    public func map<NewStateType>(_ transform: @escaping (StateType) -> NewStateType) -> AnyStateProvider<NewStateType> {
+    public func map<NewStateType>(_ transform: @Sendable @escaping (StateType) -> NewStateType) -> AnyStateProvider<NewStateType> {
         .init(self.statePublisher.map(transform))
     }
 }

@@ -49,10 +49,11 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
+    
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType,
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType,
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, Self> {
         .init(
             middleware: self,
@@ -107,9 +108,10 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
+    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType,
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType,
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, Self>
     where GlobalInputActionType == InputActionType {
         .init(
@@ -167,9 +169,10 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
+    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, Self>
     where OutputActionType == GlobalOutputActionType {
         .init(
@@ -228,9 +231,10 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
+    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?,
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType
     ) -> LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, Self>
     where GlobalStateType == StateType {
         .init(
@@ -286,8 +290,9 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
+    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
-        inputAction inputActionMap: @escaping (GlobalInputActionType) -> InputActionType?
+        inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?
     ) -> LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, Self>
     where OutputActionType == GlobalOutputActionType, GlobalStateType == StateType {
         .init(
@@ -341,8 +346,9 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
+    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
-        outputAction outputActionMap: @escaping (OutputActionType) -> GlobalOutputActionType
+        outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType
     ) -> LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, Self>
     where GlobalInputActionType == InputActionType, GlobalStateType == StateType {
         .init(
@@ -395,8 +401,9 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
+    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
-        state stateMap: @escaping (GlobalStateType) -> StateType
+        state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, Self>
     where GlobalInputActionType == InputActionType, OutputActionType == GlobalOutputActionType {
         .init(

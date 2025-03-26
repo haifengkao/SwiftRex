@@ -6,9 +6,9 @@ import SwiftRex
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension EffectMiddleware where StateType: Identifiable {
     public func liftToCollection<GlobalAction, GlobalState, CollectionState: MutableCollection>(
-        inputAction actionMap: @escaping (GlobalAction) -> ElementIDAction<StateType.ID, InputActionType>?,
-        outputAction outputMap: @escaping (ElementIDAction<StateType.ID, OutputActionType>) -> GlobalAction,
-        stateCollection: @escaping (GlobalState) -> CollectionState
+        inputAction actionMap: @Sendable @escaping (GlobalAction) -> ElementIDAction<StateType.ID, InputActionType>?,
+        outputAction outputMap: @Sendable @escaping (ElementIDAction<StateType.ID, OutputActionType>) -> GlobalAction,
+        stateCollection: @Sendable @escaping (GlobalState) -> CollectionState
     ) -> EffectMiddleware<GlobalAction, GlobalAction, GlobalState, Dependencies> where CollectionState.Element == StateType {
         EffectMiddleware<GlobalAction, GlobalAction, GlobalState, Dependencies>(
             dependencies: self.dependencies,
@@ -63,9 +63,9 @@ extension EffectMiddleware where StateType: Identifiable, InputActionType == Out
 extension MiddlewareReader {
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func liftToCollection<ItemInputActionType, ItemOutputActionType, ItemStateType, GlobalAction, GlobalState, CollectionState>(
-        inputAction actionMap: @escaping (GlobalAction) -> ElementIDAction<ItemStateType.ID, ItemInputActionType>?,
+        inputAction actionMap: @Sendable @escaping (GlobalAction) -> ElementIDAction<ItemStateType.ID, ItemInputActionType>?,
         outputAction outputMap: @escaping (ElementIDAction<ItemStateType.ID, ItemOutputActionType>) -> GlobalAction,
-        stateCollection: @escaping (GlobalState) -> CollectionState
+        stateCollection: @Sendable @escaping (GlobalState) -> CollectionState
     ) -> MiddlewareReader<Dependencies, EffectMiddleware<GlobalAction, GlobalAction, GlobalState, Dependencies>>
     where CollectionState: MutableCollection,
           CollectionState.Element == ItemStateType,

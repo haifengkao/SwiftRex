@@ -19,7 +19,6 @@ public struct IdentityMiddleware<InputActionType, OutputActionType, StateType>: 
        - state: a closure to obtain the most recent state
      - Returns: possible Side-Effects wrapped in an IO struct
      */
-    @MainActor
     public func handle(action: InputActionType, from dispatcher: ActionSource, state: @escaping GetState<StateType>) -> IO<OutputActionType> {
         .pure()
     }
