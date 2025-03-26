@@ -36,8 +36,8 @@ import SwiftRex
 /// ```
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 open class ObservableViewModel<ViewAction, ViewState>: StoreType, ObservableObject {
-    private var cancellableBinding: AnyCancellable?
-    private var store: StoreProjection<ViewAction, ViewState>
+    private let cancellableBinding: AnyCancellable?
+    private let store: StoreProjection<ViewAction, ViewState>
 
     @Published public var state: ViewState
     public let statePublisher: UnfailablePublisherType<ViewState>
