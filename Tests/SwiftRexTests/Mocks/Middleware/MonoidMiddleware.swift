@@ -1,6 +1,6 @@
 import SwiftRex
 
-struct MonoidMiddleware<InputActionType, OutputActionType, StateType>: MiddlewareProtocol, Monoid {
+struct MonoidMiddleware<InputActionType: Sendable, OutputActionType: Sendable, StateType: Sendable>: MiddlewareProtocol, Monoid {
     var string: String
     let mock: MiddlewareProtocolMock<InputActionType, OutputActionType, StateType>
 

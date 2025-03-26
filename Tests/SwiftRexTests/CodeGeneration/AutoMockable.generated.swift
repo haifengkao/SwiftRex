@@ -39,7 +39,7 @@ class ActionHandlerMock<ActionType>: ActionHandler {
     }
 
 }
-class MiddlewareProtocolMock<InputActionType, OutputActionType, StateType>: MiddlewareProtocol {
+class MiddlewareProtocolMock<InputActionType: Sendable, OutputActionType: Sendable, StateType: Sendable>: MiddlewareProtocol {
 
     //MARK: - handle
 

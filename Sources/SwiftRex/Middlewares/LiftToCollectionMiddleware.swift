@@ -7,9 +7,9 @@
  */
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public struct LiftToCollectionMiddleware<
-    GlobalInputActionType,
-    GlobalOutputActionType,
-    GlobalStateType,
+    GlobalInputActionType: Sendable,
+    GlobalOutputActionType: Sendable,
+    GlobalStateType: Sendable,
     CollectionState: MutableCollection,
     PartMiddleware: MiddlewareProtocol>: MiddlewareProtocol
 where PartMiddleware.StateType: Identifiable, CollectionState.Element == PartMiddleware.StateType {

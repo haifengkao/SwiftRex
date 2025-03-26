@@ -47,7 +47,7 @@ public typealias UnfailableSubscriberType<Element> = SubscriberType<Element, Nev
 /// Abstraction over publisher/observable/signal producer types from reactive frameworks.
 /// This abstraction uses concept similar to type-erasure or protocol witness pattern, wrapping the behaviour of concrete implementations and
 /// delegating to them once the wrapper funcions are called.
-public struct PublisherType<Element, ErrorType: Error>: Sendable {
+public struct PublisherType<Element, ErrorType: Error>: @unchecked Sendable {
     public let subscribe: @Sendable (SubscriberType<Element, ErrorType>) -> SubscriptionType
     public init(subscribe: @escaping @Sendable (SubscriberType<Element, ErrorType>) -> SubscriptionType) {
         self.subscribe = subscribe

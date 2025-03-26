@@ -1,7 +1,7 @@
 import Foundation
 
 /// Erases the protocol `Middleware`. Please check its documentation for more information.
-public struct AnyMiddleware<InputActionType, OutputActionType, StateType>: MiddlewareProtocol {
+public struct AnyMiddleware<InputActionType: Sendable, OutputActionType: Sendable, StateType: Sendable>: MiddlewareProtocol {
     private let _handle: @MainActor (InputActionType, ActionSource, @escaping GetState<StateType>) -> IO<OutputActionType>
     // It doesn't completely erase the type for identity or composed, for performance reasons
     // That way, when we compose again, we discard identity or flattenize the composed middleware

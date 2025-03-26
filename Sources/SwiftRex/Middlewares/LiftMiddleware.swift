@@ -5,7 +5,7 @@
 
  You should not be able to instantiate this class directly, instead, create a middleware for the sub-state and call `Middleware.lift(_:)`, passing as parameter the keyPath from whole to part.
  */
-public struct LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, PartMiddleware: MiddlewareProtocol>: MiddlewareProtocol {
+public struct LiftMiddleware<GlobalInputActionType: Sendable, GlobalOutputActionType: Sendable, GlobalStateType: Sendable, PartMiddleware: MiddlewareProtocol>: MiddlewareProtocol {
     public typealias InputActionType = GlobalInputActionType
     public typealias OutputActionType = GlobalOutputActionType
     public typealias StateType = GlobalStateType

@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:6.0
 import PackageDescription
 
 let package = Package(
@@ -8,7 +8,6 @@ let package = Package(
         .library(name: "ReactiveSwiftRex", targets: ["SwiftRex", "ReactiveSwiftRex"]),
         .library(name: "RxSwiftRex", targets: ["SwiftRex", "RxSwiftRex"]),
 
-        .library(name: "CombineRexDynamic", type: .dynamic, targets: ["SwiftRex", "CombineRex"]),
         .library(name: "ReactiveSwiftRexDynamic", type: .dynamic, targets: ["SwiftRex", "ReactiveSwiftRex"]),
         .library(name: "RxSwiftRexDynamic", type: .dynamic, targets: ["SwiftRex", "RxSwiftRex"])
     ],
@@ -21,14 +20,10 @@ let package = Package(
             name: "SwiftRex",
             exclude: ["CodeGeneration/Templates"]
         ),
-        .target(name: "CombineRex", dependencies: ["SwiftRex"]),
         .target(name: "ReactiveSwiftRex", dependencies: ["SwiftRex", "ReactiveSwift"]),
         .target(name: "RxSwiftRex", dependencies: ["SwiftRex", "RxSwift"]),
 
         .testTarget(name: "SwiftRexTests", dependencies: ["SwiftRex"]),
-        .testTarget(name: "CombineRexTests", dependencies: ["CombineRex"]),
-        .testTarget(name: "ReactiveSwiftRexTests", dependencies: ["ReactiveSwiftRex"]),
-        .testTarget(name: "RxSwiftRexTests", dependencies: ["RxSwiftRex"])
     ],
-    swiftLanguageVersions: [.v5]
+    swiftLanguageModes: [.v6]
 )

@@ -7,7 +7,7 @@
  let composedMiddleware = firstMiddleware <> secondMiddleware <> thirdMiddleware
  ```
  */
-public struct ComposedMiddleware<InputActionType, OutputActionType, StateType>: MiddlewareProtocol {
+public struct ComposedMiddleware<InputActionType: Sendable, OutputActionType: Sendable, StateType: Sendable>: MiddlewareProtocol {
     var middlewares: [AnyMiddleware<InputActionType, OutputActionType, StateType>] = []
 
     /**
