@@ -3,6 +3,7 @@ import Foundation
 import XCTest
 
 // swiftlint:disable:next
+@MainActor
 class ReducerTests: XCTestCase {
     func testAnyReducer() {
         // Given
