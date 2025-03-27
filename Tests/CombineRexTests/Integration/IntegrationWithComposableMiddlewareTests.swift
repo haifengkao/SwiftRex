@@ -64,9 +64,7 @@ class IntegrationWithComposableMiddlewareTests: XCTestCase {
                 XCTAssertEqual(currentState.running, .stopped)
 
                 return IO {output in
-
                     if getState().preparation == .done && getState().running == .requested {
-
                         output.dispatch(.actions(.run), from: .here())
                         // this will happen, actually
                         // XCTFail("This should never happen")

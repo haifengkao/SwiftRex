@@ -170,20 +170,20 @@ class ASAPSchedulerTests: XCTestCase {
         call1.expectedFulfillmentCount = 2
         call1.assertForOverFulfill = true
         let call2 = expectation(description: "2")
-        
+
         actor TimerManager {
             var timerHandle: Cancellable?
-            
+
             func setTimer(_ timer: Cancellable) {
                 timerHandle = timer
             }
-            
+
             func cancelTimer() {
                 timerHandle?.cancel()
                 timerHandle = nil
             }
         }
-        
+
         let timerManager = TimerManager()
 
         DispatchQueue.main.async {
@@ -202,13 +202,13 @@ class ASAPSchedulerTests: XCTestCase {
                         call1.fulfill()
                     }
                 }
-                
+
                 // Create timer in an async context that can safely transfer it to the actor
                 Task {
                     let timer = timerClosure()
                     await timerManager.setTimer(timer)
                 }
-                
+
                 XCTAssertFalse(DispatchQueue.isMainQueue)
                 XCTAssertFalse(Thread.isMainThread)
                 call2.fulfill()
@@ -216,7 +216,7 @@ class ASAPSchedulerTests: XCTestCase {
         }
 
         wait(for: [call2, call1], timeout: 0.1, enforceOrder: true)
-        
+
         Task {
             await timerManager.cancelTimer()
         }

@@ -20,7 +20,7 @@ where PartMiddleware.StateType: Identifiable, CollectionState.Element == PartMid
                                 @escaping GetState<GlobalStateType>) -> IO<GlobalOutputActionType>
 
     init(middleware: PartMiddleware,
-         onAction:  @MainActor @escaping (PartMiddleware, GlobalInputActionType, ActionSource, @escaping GetState<GlobalStateType>) -> IO<GlobalOutputActionType>
+         onAction: @MainActor @escaping (PartMiddleware, GlobalInputActionType, ActionSource, @escaping GetState<GlobalStateType>) -> IO<GlobalOutputActionType>
     ) {
         self.partMiddleware = middleware
         self.actionHandler = onAction

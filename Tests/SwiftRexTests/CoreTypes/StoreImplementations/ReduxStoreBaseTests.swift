@@ -94,7 +94,7 @@ class ReduxStoreBaseTests: XCTestCase {
             }
         }
         let counter = Counter()
-        
+
         _ = store.statePublisher.subscribe(SubscriberType(onValue: { [counter] value in
             Task {
                 let count = await counter.increment()

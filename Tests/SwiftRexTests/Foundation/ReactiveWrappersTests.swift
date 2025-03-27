@@ -302,7 +302,7 @@ class ReactiveWrappersTests: XCTestCase {
     func testReplaySubjectTypeMutate() {
         let shouldCallClosure = expectation(description: "Closure should be called")
         shouldCallClosure.expectedFulfillmentCount = 2
-        
+
         actor TimeCounter {
             var time = 1
             func increment() -> Int {
@@ -311,7 +311,7 @@ class ReactiveWrappersTests: XCTestCase {
             }
         }
         let timeCounter = TimeCounter()
-        
+
         let subscriberType = SubscriberType<String, Error>(onValue: { [timeCounter] string in
             Task {
                 let currentTime = await timeCounter.increment()
@@ -351,7 +351,7 @@ class ReactiveWrappersTests: XCTestCase {
     func testReplaySubjectTypeMutateWhenTrue() {
         let shouldCallClosure = expectation(description: "Closure should be called")
         shouldCallClosure.expectedFulfillmentCount = 2
-        
+
         actor TimeCounter {
             var time = 1
             func increment() -> Int {
@@ -360,7 +360,7 @@ class ReactiveWrappersTests: XCTestCase {
             }
         }
         let timeCounter = TimeCounter()
-        
+
         let subscriberType = SubscriberType<String, Error>(onValue: { [timeCounter] string in
             Task {
                 let currentTime = await timeCounter.increment()
@@ -403,7 +403,7 @@ class ReactiveWrappersTests: XCTestCase {
     func testReplaySubjectTypeMutateWhenIsFalse() {
         let shouldCallClosure = expectation(description: "Closure should be called")
         shouldCallClosure.expectedFulfillmentCount = 1
-        
+
         actor TimeCounter {
             var time = 1
             func increment() -> Int {
@@ -412,7 +412,7 @@ class ReactiveWrappersTests: XCTestCase {
             }
         }
         let timeCounter = TimeCounter()
-        
+
         let subscriberType = SubscriberType<String, Error>(onValue: { [timeCounter] string in
             Task {
                 let currentTime = await timeCounter.increment()

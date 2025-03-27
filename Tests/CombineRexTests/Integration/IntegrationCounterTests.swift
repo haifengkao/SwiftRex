@@ -106,7 +106,7 @@ enum CounterService {
         typealias StateType = Int
 
         func handle(action: AppAction.CounterEvent, from dispatcher: SwiftRex.ActionSource, state: @escaping SwiftRex.GetState<Int>) -> SwiftRex.IO<AppAction.CounterAction> {
-            return .init { output in
+            .init { output in
                 switch action {
                 case .requestIncrease: output.dispatch(.increase, from: .here())
                 case .requestDecrease: output.dispatch(.decrease, from: .here())
