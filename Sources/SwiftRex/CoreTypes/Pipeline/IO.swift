@@ -1,9 +1,9 @@
 import Foundation
 
 public struct IO<OutputActionType: Sendable> {
-    private let runIO: (AnyActionHandler<OutputActionType>) -> Void
+    private let runIO: (AnyMainActorActionHandler<OutputActionType>) -> Void
 
-    public init(_ run: @escaping (AnyActionHandler<OutputActionType>) -> Void) {
+    public init(_ run: @escaping (AnyMainActorActionHandler<OutputActionType>) -> Void) {
         self.runIO = run
     }
 
@@ -11,11 +11,11 @@ public struct IO<OutputActionType: Sendable> {
         IO { _ in }
     }
 
-    public func run(_ output: AnyActionHandler<OutputActionType>) {
+    public func run(_ output: AnyMainActorActionHandler<OutputActionType>) {
         runIO(output)
     }
 
-    public func run (_ output: @escaping (DispatchedAction<OutputActionType>) -> Void) {
+    public func run (_ output: @MainActor @escaping (DispatchedAction<OutputActionType>) -> Void) {
         runIO(.init(output))
     }
 }
@@ -32,7 +32,7 @@ public func <> <OutputActionType>(lhs: IO<OutputActionType>, rhs: IO<OutputActio
 }
 
 extension IO {
-    public func map<B>(_ transform: @escaping (OutputActionType) -> B) -> IO<B> {
+    public func map<B>(_ transform: @Sendable @escaping (OutputActionType) -> B) -> IO<B> {
         IO<B> { output in
             self.run(output.contramap(transform))
         }
@@ -40,7 +40,7 @@ extension IO {
 }
 
 extension IO {
-    public func flatMap<B>(_ transform: @escaping (DispatchedAction<OutputActionType>) -> IO<B>) -> IO<B> {
+    public func flatMap<B>(_ transform: @Sendable @escaping (DispatchedAction<OutputActionType>) -> IO<B>) -> IO<B> {
         IO<B> { actionHandlerB in
             self.run(.init { outputActionType in
                 transform(outputActionType).run(actionHandlerB)

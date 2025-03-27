@@ -76,22 +76,22 @@ class ReduxPipelineWrapperTests: XCTestCase {
         @MainActor
         class StateGetter {
             var middlewareGetState: (@MainActor () -> TestState)?
-            
+
             func setGetState(_ getState: @MainActor @escaping () -> TestState) {
                 middlewareGetState = getState
             }
-            
+
             func getState() -> TestState? {
-                return middlewareGetState?()
+                middlewareGetState?()
             }
         }
-        
+
         let stateGetter = StateGetter()
         let middlewareMock = IsoMiddlewareMock<AppAction, TestState>()
 
         middlewareMock.handleActionFromStateClosure = { _, _, getState in
             stateGetter.setGetState(getState)
-            
+
             return .pure()
         }
 
@@ -108,7 +108,7 @@ class ReduxPipelineWrapperTests: XCTestCase {
             reducer: reducer,
             middleware: middlewareMock)
         wrapper.dispatch(.bar(.alpha))
-        
+
         // Wait a short time for the async task to complete
         let expectation = expectation(description: "Get state verification")
         Task {
@@ -116,7 +116,7 @@ class ReduxPipelineWrapperTests: XCTestCase {
             XCTAssertEqual(currentState, state)
             expectation.fulfill()
         }
-        
+
         wait(for: [expectation], timeout: 0.1)
     }
 

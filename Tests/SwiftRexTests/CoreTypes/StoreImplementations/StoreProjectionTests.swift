@@ -6,7 +6,7 @@ class StoreProjectionTests: XCTestCase {
     func testStoreProjectionDispatchesActionToUpstream() {
         let stateSubject = CurrentValueSubject(currentValue: TestState())
         let shouldCallUpstreamActionHandler = expectation(description: "upstream action handler should have been called")
-        let upstreamActionHandler: (DispatchedAction<AppAction>) -> Void = { dispatchedAction in
+        let upstreamActionHandler: @Sendable (DispatchedAction<AppAction>) -> Void = { dispatchedAction in
             XCTAssertEqual(.bar(.delta), dispatchedAction.action)
             XCTAssertEqual("file_1", dispatchedAction.dispatcher.file)
             XCTAssertEqual("function_1", dispatchedAction.dispatcher.function)
@@ -32,7 +32,7 @@ class StoreProjectionTests: XCTestCase {
         wait(for: [shouldNotifyInitialState], timeout: 0.1)
     }
 
-    func testStoreProjectionDispatchesActionToUpstreamStore() {
+    @MainActor func testStoreProjectionDispatchesActionToUpstreamStore() {
         let stateSubject = CurrentValueSubject(currentValue: TestState())
         let shouldCallUpstreamActionHandler = expectation(description: "upstream action handler should have been called")
         let shouldCallReducer = expectation(description: "reducer should have been called")
@@ -79,7 +79,7 @@ class StoreProjectionTests: XCTestCase {
         wait(for: [shouldCallUpstreamActionHandler, shouldCallReducer], timeout: 0.1, enforceOrder: true)
     }
 
-    func testStoreProjectionForwardsStateFromUpstreamStore() {
+    @MainActor func testStoreProjectionForwardsStateFromUpstreamStore() {
         let initialState = TestState(value: .init(), name: "this comes from original store")
         let shouldNotifyInitialState = expectation(description: "initial state should have been notified")
         let stateSubject = CurrentValueSubject(currentValue: initialState)

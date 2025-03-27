@@ -22,12 +22,14 @@ class StoreTypeTypeErasureTests: XCTestCase {
         XCTAssertEqual(5, mock.dispatchCallsCount)
     }
 
+    @MainActor
     func testActionHandlerClosureErased() {
         var actions: [String] = []
+        let actionHandler: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+            actions.append(dispatchedAction.action)
+        }
         let sut = AnyStoreType<String, Void>(
-            action: { dispatchedAction in
-                actions.append(dispatchedAction.action)
-            },
+            actionHandler: actionHandler.eraseAnyActionHandler(),
             state: .init(subscribe: { _ in preconditionFailure("no state when it's never") })
         )
 
@@ -42,10 +44,11 @@ class StoreTypeTypeErasureTests: XCTestCase {
 
     func testActionHandlerContramap() {
         var actions: [String] = []
+        let actionHandler: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+            actions.append(dispatchedAction.action)
+        }
         let stringHandler = AnyStoreType<String, Never>(
-            action: { dispatchedAction in
-                actions.append(dispatchedAction.action)
-            },
+            actionHandler: actionHandler.eraseAnyActionHandler(),
             state: .init(subscribe: { _ in preconditionFailure("no state when it's never") })
         )
         let intHandler: AnyActionHandler<Int> = stringHandler.contramap { "\($0)" }
@@ -65,10 +68,11 @@ class StoreTypeTypeErasureTests: XCTestCase {
             subscriber.onValue(true)
             return FooSubscription()
         }
+        let actionHandler: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+            actions.append(dispatchedAction.action)
+        }
         let stringHandler = AnyStoreType<String, Bool>(
-            action: { dispatchedAction in
-                actions.append(dispatchedAction.action)
-            },
+            actionHandler: actionHandler.eraseAnyActionHandler(),
             state: publisher
         )
         let intHandler: AnyStoreType<Int, Bool> = stringHandler.contramapAction { "\($0)" }

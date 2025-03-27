@@ -24,7 +24,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -72,7 +74,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -108,7 +112,7 @@ extension MiddlewareReaderTests {
 
         // Then
         XCTAssertEqual(globalReceived, globalOutputActions + ["foo"])
-        XCTAssertEqual(receivedLocalInputActions, localInputActions)
+        XCTAssertEqual(receivedLocalInputActions, localInputActions.map { $0 })
     }
 
     @MainActor
@@ -118,7 +122,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -164,7 +170,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -210,7 +218,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -257,7 +267,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -302,7 +314,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -347,7 +361,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -392,7 +408,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -437,7 +455,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -482,7 +502,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -528,7 +550,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -572,7 +596,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -616,7 +642,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)
@@ -660,7 +688,9 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+            globalReceived.append(dispatchedAction.action)
+        }
 
         let localReader = LocalTestReader { dependencies in
             XCTAssertEqual(self.localDependencies, dependencies)

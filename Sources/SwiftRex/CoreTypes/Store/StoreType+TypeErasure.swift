@@ -18,8 +18,13 @@ public struct AnyStoreType<ActionType: Sendable, StateType: Sendable>: StoreType
     ///
     /// For more information please check the protocol documentation.
     /// The easiest way of creating this type is calling ``StoreType/eraseToAnyStoreType()`` on any store type.
-    public init(action: @escaping (DispatchedAction<ActionType>) -> Void, state: UnfailablePublisherType<StateType>) {
+    public init(action: @Sendable @escaping (DispatchedAction<ActionType>) -> Void, state: UnfailablePublisherType<StateType>) {
         self.actionHandler = AnyActionHandler(action)
+        self.stateProvider = AnyStateProvider(state)
+    }
+
+    public init(actionHandler: AnyActionHandler<ActionType>, state: UnfailablePublisherType<StateType>) {
+        self.actionHandler = actionHandler
         self.stateProvider = AnyStateProvider(state)
     }
 

@@ -21,9 +21,10 @@ class ActionHandlerTypeErasureTests: XCTestCase {
         XCTAssertEqual(5, mock.dispatchCallsCount)
     }
 
+    @MainActor
     func testActionHandlerClosureErased() {
         var actions: [String] = []
-        let sut = AnyActionHandler { dispatchedAction in
+        let sut = AnyMainActorActionHandler { dispatchedAction in
             actions.append(dispatchedAction.action)
         }
 
@@ -36,12 +37,13 @@ class ActionHandlerTypeErasureTests: XCTestCase {
         XCTAssertEqual(["1", "2", "3", "4", "5"], actions)
     }
 
+    @MainActor
     func testActionHandlerContramap() {
         var actions: [String] = []
-        let stringHandler = AnyActionHandler<String> { dispatchedAction in
+        let stringHandler = AnyMainActorActionHandler<String> { dispatchedAction in
             actions.append(dispatchedAction.action)
         }
-        let intHandler: AnyActionHandler<Int> = stringHandler.contramap { "\($0)" }
+        let intHandler: AnyMainActorActionHandler<Int> = stringHandler.contramap { "\($0)" }
 
         intHandler.dispatch(1, from: .here())
         intHandler.dispatch(2, from: .here())

@@ -17,7 +17,7 @@ class ReduxStoreBaseTests: XCTestCase {
         let events: [AppAction] = [.foo, .bar(.charlie), .foo]
         let initialState = TestState()
         let fooMiddleware = IsoMiddlewareMock<AppAction, TestState>()
-        var fooMiddlewareOutput: AnyActionHandler<AppAction>?
+        var fooMiddlewareOutput: AnyMainActorActionHandler<AppAction>?
 
         fooMiddleware.handleActionFromStateClosure = { action, _, _ in
             guard action == .foo else {
@@ -33,17 +33,21 @@ class ReduxStoreBaseTests: XCTestCase {
             }
         }
         let barMiddleware = IsoMiddlewareMock<AppAction.Bar, String>()
-        var barMiddlewareOutput: AnyActionHandler<AppAction.Bar>?
+        var barMiddlewareOutput: AnyMainActorActionHandler<AppAction.Bar>?
 
         barMiddleware.handleActionFromStateClosure = { action, _, _ in
             switch action {
             case .alpha:
                 DispatchQueue.global().asyncAfter(deadline: .now() + 0.05) {
-                    barMiddlewareOutput?.dispatch(.delta, from: .here())
+                    Thread.asap {
+                        barMiddlewareOutput?.dispatch(.delta, from: .here())
+                    }
                 }
             case .bravo:
                 DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
-                    barMiddlewareOutput?.dispatch(.echo, from: .here())
+                    Thread.asap {
+                        barMiddlewareOutput?.dispatch(.echo, from: .here())
+                    }
                 }
             default: break
             }

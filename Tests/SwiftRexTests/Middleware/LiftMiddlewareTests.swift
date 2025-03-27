@@ -9,7 +9,7 @@ class LiftMiddlewareTests: XCTestCase {
 extension LiftMiddlewareTests {
     func testLiftMiddlewareInputActionOutputActionInputState_OutputActionsAreForwardedToGlobalContext() {
         var globalReceived: [DispatchedAction<AppAction>] = []
-        let globalDispatcher: AnyActionHandler<AppAction> = .init { action in globalReceived.append(action) }
+        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { action in globalReceived.append(action) }
         let nameMiddleware = IsoMiddlewareMock<AppAction.Bar, String>()
         let generalMiddleware: LiftMiddleware<AppAction, AppAction, TestState, IsoMiddlewareMock<AppAction.Bar, String>> =
             nameMiddleware.lift(
@@ -76,9 +76,9 @@ extension LiftMiddlewareTests {
 // MARK: - Lifting 2 properties at once: Input Action, Output Action
 extension LiftMiddlewareTests {
     func testLiftMiddlewareInputActionOutputAction_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyActionHandler<AppAction.Bar>?
+        var localDispatcher: AnyMainActorActionHandler<AppAction.Bar>?
         var globalReceived: [DispatchedAction<AppAction>] = []
-        let globalDispatcher: AnyActionHandler<AppAction> = .init { action in globalReceived.append(action) }
+        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { action in globalReceived.append(action) }
 
         let nameMiddleware = IsoMiddlewareMock<AppAction.Bar, TestState>()
         let generalMiddleware: LiftMiddleware<AppAction, AppAction, TestState, IsoMiddlewareMock<AppAction.Bar, TestState>> =
@@ -146,9 +146,9 @@ extension LiftMiddlewareTests {
 // MARK: - Lifting 2 properties at once: Input Action, State
 extension LiftMiddlewareTests {
     func testLiftMiddlewareInputActionInputState_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyActionHandler<AppAction>?
+        var localDispatcher: AnyMainActorActionHandler<AppAction>?
         var globalReceived: [DispatchedAction<AppAction>] = []
-        let globalDispatcher: AnyActionHandler<AppAction> = .init { action in globalReceived.append(action) }
+        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { action in globalReceived.append(action) }
 
         let nameMiddleware = MiddlewareMock<AppAction.Bar, AppAction, String>()
         let generalMiddleware: LiftMiddleware<AppAction, AppAction, TestState, MiddlewareMock<AppAction.Bar, AppAction, String>> =
@@ -214,9 +214,9 @@ extension LiftMiddlewareTests {
 // MARK: - Lifting 2 properties at once: Output Action, State
 extension LiftMiddlewareTests {
     func testLiftMiddlewareOutputActionInputState_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyActionHandler<AppAction.Bar>?
+        var localDispatcher: AnyMainActorActionHandler<AppAction.Bar>?
         var globalReceived: [DispatchedAction<AppAction>] = []
-        let globalDispatcher: AnyActionHandler<AppAction> = .init { action in globalReceived.append(action) }
+        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { action in globalReceived.append(action) }
 
         let nameMiddleware = MiddlewareMock<AppAction, AppAction.Bar, String>()
         let generalMiddleware: LiftMiddleware<AppAction, AppAction, TestState, MiddlewareMock<AppAction, AppAction.Bar, String>> =
@@ -282,9 +282,9 @@ extension LiftMiddlewareTests {
 // MARK: - Lifting a single property: Input Action
 extension LiftMiddlewareTests {
     func testLiftMiddlewareInputAction_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyActionHandler<AppAction>?
+        var localDispatcher: AnyMainActorActionHandler<AppAction>?
         var globalReceived: [DispatchedAction<AppAction>] = []
-        let globalDispatcher: AnyActionHandler<AppAction> = .init { action in globalReceived.append(action) }
+        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { action in globalReceived.append(action) }
 
         let nameMiddleware = MiddlewareMock<AppAction.Bar, AppAction, TestState>()
         let generalMiddleware: LiftMiddleware<AppAction, AppAction, TestState, MiddlewareMock<AppAction.Bar, AppAction, TestState>> =
@@ -348,9 +348,9 @@ extension LiftMiddlewareTests {
 // MARK: - Lifting a single property: Output Action
 extension LiftMiddlewareTests {
     func testLiftMiddlewareOutputAction_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyActionHandler<AppAction.Bar>?
+        var localDispatcher: AnyMainActorActionHandler<AppAction.Bar>?
         var globalReceived: [DispatchedAction<AppAction>] = []
-        let globalDispatcher: AnyActionHandler<AppAction> = .init { action in globalReceived.append(action) }
+        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { action in globalReceived.append(action) }
 
         let nameMiddleware = MiddlewareMock<AppAction, AppAction.Bar, TestState>()
         let generalMiddleware: LiftMiddleware<AppAction, AppAction, TestState, MiddlewareMock<AppAction, AppAction.Bar, TestState>> =
@@ -414,9 +414,9 @@ extension LiftMiddlewareTests {
 // MARK: - Lifting a single property: State
 extension LiftMiddlewareTests {
     func testLiftMiddlewareInputState_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyActionHandler<AppAction>?
+        var localDispatcher: AnyMainActorActionHandler<AppAction>?
         var globalReceived: [DispatchedAction<AppAction>] = []
-        let globalDispatcher: AnyActionHandler<AppAction> = .init { action in globalReceived.append(action) }
+        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { action in globalReceived.append(action) }
 
         let nameMiddleware = MiddlewareMock<AppAction, AppAction, String>()
         let generalMiddleware: LiftMiddleware<AppAction, AppAction, TestState, MiddlewareMock<AppAction, AppAction, String>> =

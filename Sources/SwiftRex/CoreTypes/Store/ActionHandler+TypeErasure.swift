@@ -5,7 +5,7 @@
 /// ViewModels) in your UI layer, or even Middlewares can create actions of a certain type and send to your store, that
 /// is generalized by this protocol.
 public struct AnyActionHandler<ActionType: Sendable>: ActionHandler {
-    private let realHandler: (DispatchedAction<ActionType>) -> Void
+    private let realHandler: @Sendable (DispatchedAction<ActionType>) -> Void
 
     /// Erases the provided `ActionHandler` by using its inner methods from this wrapper
     /// - Parameter realHandler: the concrete `ActionHandler` you're erasing
@@ -15,7 +15,7 @@ public struct AnyActionHandler<ActionType: Sendable>: ActionHandler {
 
     /// Erases the any type that implements the `dispatch` function to act as a `ActionHandler`
     /// - Parameter realHandler: a function with the same signature of `ActionHandler.dispatch`
-    public init(_ realHandler: @escaping (DispatchedAction<ActionType>) -> Void) {
+    public init(_ realHandler: @Sendable @escaping (DispatchedAction<ActionType>) -> Void) {
         self.realHandler = realHandler
     }
 

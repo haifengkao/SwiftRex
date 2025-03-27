@@ -10,7 +10,7 @@ class LiftToCollectionMiddlewareTests: XCTestCase {
 extension LiftToCollectionMiddlewareTests {
     func testLiftToCollectionMiddlewareInputActionOutputActionInputState_OutputActionsAreForwardedToGlobalContext() {
         var globalReceived: [DispatchedAction<AppAction>] = []
-        let globalDispatcher: AnyActionHandler<AppAction> = .init { action in globalReceived.append(action) }
+        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { action in globalReceived.append(action) }
         let nameMiddleware = IsoMiddlewareMock<AppAction.Bar, AppState.Item>()
 
         let generalMiddleware: LiftToCollectionMiddleware<
@@ -113,7 +113,7 @@ extension LiftToCollectionMiddlewareTests {
 extension LiftToCollectionMiddlewareTests {
     func testLiftToCollectionMiddlewareInputActionIsEqualToOutputAction_OutputActionsAreForwardedToGlobalContext() {
         var globalReceived: [DispatchedAction<AppAction>] = []
-        let globalDispatcher: AnyActionHandler<AppAction> = .init { action in globalReceived.append(action) }
+        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { action in globalReceived.append(action) }
         let nameMiddleware = IsoMiddlewareMock<AppAction.Bar, AppState.Item>()
 
         let generalMiddleware: LiftToCollectionMiddleware<

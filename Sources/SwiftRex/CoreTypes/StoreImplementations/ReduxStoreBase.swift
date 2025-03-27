@@ -82,6 +82,7 @@ import Foundation
  other than UI. No more dependency injection for your views, they only need to know about the store (the main one or
  a derived view store).
  */
+@MainActor
 open class ReduxStoreBase<ActionType: Sendable, StateType: Sendable>: ReduxStoreProtocol {
     /// Pipeline to execute upon action arrival, containing all middlewares and reducers
     public let pipeline: ReduxPipelineWrapper<AnyMiddleware<ActionType, ActionType, StateType>>

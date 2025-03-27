@@ -36,7 +36,7 @@ where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
                 emitsValue: self.emitsValue
             )
 
-            Self.runIO(io, handler: {  dispatchedAction in self.dispatch(dispatchedAction) })
+            Self.runIO(io, handler: { dispatchedAction in self.dispatch(dispatchedAction) })
         }
     }
 
@@ -72,7 +72,7 @@ where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
         return io
     }
 
-    private static func runIO(_ io: IO<ActionType>, handler: @escaping (DispatchedAction<ActionType>) -> Void) {
+    private static func runIO(_ io: IO<ActionType>, handler: @MainActor @escaping (DispatchedAction<ActionType>) -> Void) {
         io.run(.init { dispatchedAction in
             handler(dispatchedAction)
         })
@@ -90,7 +90,7 @@ extension ReduxPipelineWrapper where StateType: Equatable {
 }
 
 extension Thread {
-    public static func asap(_ block: @MainActor @escaping () -> Void) {
+    static func asap(_ block: @MainActor @escaping () -> Void) {
         if Thread.isMainThread {
             MainActor.assumeIsolated(block)
         } else {

@@ -11,7 +11,7 @@ extension StoreType {
     ///   - transform: a closure that will be executed every time an action arrives at the proxy ``StoreType``, so we can map it into the expected
     ///                action type of the original ``StoreType``.
     /// - Returns: an ``AnyStoreType`` with same `Statetype` but different `ActionType` than the original store.
-    public func contramapAction<NewActionType: Sendable>(_ transform: @escaping (NewActionType) -> ActionType)
+    public func contramapAction<NewActionType: Sendable>(_ transform: @escaping @Sendable (NewActionType) -> ActionType)
     -> AnyStoreType<NewActionType, StateType> {
         AnyStoreType(
             action: { dispatchedAction in

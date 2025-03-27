@@ -48,29 +48,19 @@ class ShouldEmitValuesTests: XCTestCase {
     }
 
     func testWhenShouldEmit() {
-        actor SeenTracker {
+        class SeenTracker: @unchecked Sendable {
             var seen: Set<String> = []
-            
-            func checkAndInsert(previous: String, new: String) -> Bool {
+
+            func neverSeen(_ previous: String, _ new: String) -> Bool {
                 let neverSeen = !seen.contains(new)
                 seen.insert(previous)
                 seen.insert(new)
                 return neverSeen
             }
         }
-        
-        let seenTracker = SeenTracker()
-        
-        let neverSeen: @Sendable (String, String) -> Bool = { previous, new in
-            Task {
-                return await seenTracker.checkAndInsert(previous: previous, new: new)
-            }
-            // Return a default value while waiting for the async operation
-            // This is a simple approach for testing purposes
-            return true
-        }
-        
-        let sut = ShouldEmitValue<String>.when(neverSeen)
+
+        let tracker = SeenTracker()
+        let sut = ShouldEmitValue<String>.when(tracker.neverSeen)
         let responses = [
             sut.shouldEmit(previous: "a", new: "b"),
             sut.shouldEmit(previous: "b", new: "c"),
@@ -81,28 +71,19 @@ class ShouldEmitValuesTests: XCTestCase {
     }
 
     func testWhenShouldRemove() {
-        actor SeenTracker {
+        class SeenTracker: @unchecked Sendable {
             var seen: Set<String> = []
-            
-            func checkAndInsert(previous: String, new: String) -> Bool {
+
+            func neverSeen(_ previous: String, _ new: String) -> Bool {
                 let neverSeen = !seen.contains(new)
                 seen.insert(previous)
                 seen.insert(new)
                 return neverSeen
             }
         }
-        
-        let seenTracker = SeenTracker()
-        
-        let neverSeen: @Sendable (String, String) -> Bool = { previous, new in
-            Task {
-                return await seenTracker.checkAndInsert(previous: previous, new: new)
-            }
-            // Return a default value while waiting for the async operation
-            // This is a simple approach for testing purposes
-            return true
-        }
-        let sut = ShouldEmitValue<String>.when(neverSeen)
+
+        let tracker = SeenTracker()
+        let sut = ShouldEmitValue<String>.when(tracker.neverSeen)
         let responses = [
             sut.shouldRemove(previous: "a", new: "b"),
             sut.shouldRemove(previous: "b", new: "c"),

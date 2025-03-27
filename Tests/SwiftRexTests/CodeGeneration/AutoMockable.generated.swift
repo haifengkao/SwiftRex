@@ -21,7 +21,7 @@ import AppKit
 
 
 
-class ActionHandlerMock<ActionType: Sendable>: ActionHandler {
+final class ActionHandlerMock<ActionType: Sendable>: ActionHandler, @unchecked Sendable {
 
     //MARK: - dispatch
 
@@ -58,7 +58,7 @@ class MiddlewareProtocolMock<InputActionType: Sendable, OutputActionType: Sendab
     }
 
 }
-class ReduxStoreProtocolMock<ActionType: Sendable, StateType: Sendable>: ReduxStoreProtocol {
+final class ReduxStoreProtocolMock<ActionType: Sendable, StateType: Sendable>: ReduxStoreProtocol, @unchecked Sendable {
     var pipeline: ReduxPipelineWrapper<MiddlewareType> {
         get { return underlyingPipeline }
         set(value) { underlyingPipeline = value }
@@ -79,7 +79,7 @@ class StateProviderMock<StateType: Sendable>: StateProvider {
     var underlyingStatePublisher: UnfailablePublisherType<StateType>!
 
 }
-class StoreTypeMock<ActionType: Sendable, StateType: Sendable>: StoreType {
+final class StoreTypeMock<ActionType: Sendable, StateType: Sendable>: StoreType, @unchecked Sendable {
     var statePublisher: UnfailablePublisherType<StateType> {
         get { return underlyingStatePublisher }
         set(value) { underlyingStatePublisher = value }

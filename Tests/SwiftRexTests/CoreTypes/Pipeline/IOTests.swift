@@ -18,6 +18,7 @@ class IOTests: XCTestCase {
         sut.run(.init { _ in XCTFail("Should not receive actions") })
     }
 
+    @MainActor
     func testDoSomething() {
         // Given
         let shouldDoSomething = expectation(description: "should have done something")
@@ -37,6 +38,7 @@ class IOTests: XCTestCase {
         wait(for: [shouldDoSomething, shouldReceiveValue], timeout: 0.1)
     }
 
+    @MainActor
     func testMonoidTwo() {
         // Given
         let shouldDoSomething1 = expectation(description: "should have done something 1")
