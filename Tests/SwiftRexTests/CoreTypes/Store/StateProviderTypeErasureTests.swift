@@ -2,6 +2,7 @@ import Foundation
 @testable import SwiftRex
 import XCTest
 
+@MainActor
 class StateProviderTypeErasureTests: XCTestCase {
     func testStateProviderMockErased() {
         let mock = StateProviderMock<String>()

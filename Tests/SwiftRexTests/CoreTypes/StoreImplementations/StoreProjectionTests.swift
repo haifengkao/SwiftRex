@@ -15,10 +15,11 @@ class StoreProjectionTests: XCTestCase {
             shouldCallUpstreamActionHandler.fulfill()
         }
         let sut = StoreProjection<AppAction, TestState>(action: upstreamActionHandler, state: stateSubject.subject.publisher)
-        sut.dispatch(.bar(.delta), from: .init(file: "file_1", function: "function_1", line: 1, info: "info_1"))
+        sut.dispatchAsync(.bar(.delta), from: .init(file: "file_1", function: "function_1", line: 1, info: "info_1"))
         wait(for: [shouldCallUpstreamActionHandler], timeout: 0.1)
     }
 
+    @MainActor
     func testStoreProjectionForwardsStateFromUpstream() {
         let initialState = TestState()
         let shouldNotifyInitialState = expectation(description: "initial state should have been notified")

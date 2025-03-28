@@ -2,6 +2,7 @@ import Foundation
 @testable import SwiftRex
 import XCTest
 
+@MainActor
 class ReactiveWrappersTests: XCTestCase {
     // MARK: - Subscriber
     func testSubscriberTypeOnValue() {

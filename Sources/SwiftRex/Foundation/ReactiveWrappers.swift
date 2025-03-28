@@ -3,15 +3,15 @@ import Foundation
 /// Abstraction over subscriber/observer types from reactive frameworks.
 /// This abstraction uses concept similar to type-erasure or protocol witness pattern, wrapping the behaviour of concrete implementations and
 /// delegating to them once the wrapper funcions are called.
-public struct SubscriberType<Element, ErrorType: Error>: Sendable {
+public struct SubscriberType<Element: Sendable, ErrorType: Error>: Sendable {
     /// Closure to handle new values received
-    public let onValue: @Sendable (Element) -> Void
+    public let onValue: @MainActor (Element) -> Void
 
     /// Closure to handle completion, which has an optional error in case the completion happened due to an error being emitted
-    public let onCompleted: @Sendable (ErrorType?) -> Void
+    public let onCompleted: @MainActor (ErrorType?) -> Void
 
     /// Closure to handle subscription event
-    public let onSubscribe: @Sendable (SubscriptionType) -> Void
+    public let onSubscribe: @MainActor (SubscriptionType) -> Void
 
     /// Protocol-witness of a subscriber. Configure the behaviour of this wrapper from a concrete implementation from your favourite reactive
     /// framework.
@@ -19,9 +19,9 @@ public struct SubscriberType<Element, ErrorType: Error>: Sendable {
     ///   - onValue: Closure to handle new values received
     ///   - onCompleted: Closure to handle completion, which has an optional error in case the completion happened due to an error being emitted
     ///   - onSubscribe: Closure to handle subscription event
-    public init(onValue: (@Sendable (Element) -> Void)? = nil,
-                onCompleted: (@Sendable (ErrorType?) -> Void)? = nil,
-                onSubscribe: (@Sendable (SubscriptionType) -> Void)? = nil) {
+    public init(onValue: (@MainActor (Element) -> Void)? = nil,
+                onCompleted: (@MainActor (ErrorType?) -> Void)? = nil,
+                onSubscribe: (@MainActor (SubscriptionType) -> Void)? = nil) {
         self.onValue = onValue ?? { _ in }
         self.onCompleted = onCompleted ?? { _ in }
         self.onSubscribe = onSubscribe ?? { _ in }
@@ -46,10 +46,10 @@ public typealias UnfailableSubscriberType<Element> = SubscriberType<Element, Nev
 
 /// Abstraction over publisher/observable/signal producer types from reactive frameworks.
 /// This abstraction uses concept similar to type-erasure or protocol witness pattern, wrapping the behaviour of concrete implementations and
-/// delegating to them once the wrapper funcions are called.
-public struct PublisherType<Element, ErrorType: Error>: @unchecked Sendable {
-    public let subscribe: @Sendable (SubscriberType<Element, ErrorType>) -> SubscriptionType
-    public init(subscribe: @escaping @Sendable (SubscriberType<Element, ErrorType>) -> SubscriptionType) {
+/// delegating to them once the wrapper functions are called.
+public struct PublisherType<Element: Sendable, ErrorType: Error>: Sendable {
+    public let subscribe: @MainActor (SubscriberType<Element, ErrorType>) -> SubscriptionType
+    public init(subscribe: @escaping @MainActor (SubscriberType<Element, ErrorType>) -> SubscriptionType) {
         self.subscribe = subscribe
     }
 
@@ -72,7 +72,7 @@ public struct PublisherType<Element, ErrorType: Error>: @unchecked Sendable {
     /// Maps elements emitted by the upstream into a new element type, given by the transform function provided by you
     /// - Parameter transform: a function that transforms each element emitted by the upstream into a new element
     /// - Returns: a derived publisher that emits values of the new type, by applying the transform function provided by you
-    public func map<NewElement>(_ transform: @escaping @Sendable (Element) -> NewElement) -> PublisherType<NewElement, ErrorType> {
+    public nonisolated func map<NewElement>(_ transform: @escaping @Sendable (Element) -> NewElement) -> PublisherType<NewElement, ErrorType> {
         .init { subscriber in
             self.subscribe(
                 .init(
@@ -88,7 +88,8 @@ public struct PublisherType<Element, ErrorType: Error>: @unchecked Sendable {
     /// This is similar to Combine's sink but returns a SubscriptionType instead of AnyCancellable.
     /// - Parameter receiveValue: The closure to execute on receipt of a value.
     /// - Returns: A SubscriptionType that you can use to cancel the subscription.
-    public func sink(receiveValue: @escaping @Sendable (Element) -> Void) -> SubscriptionType {
+    @MainActor
+    public func sink(receiveValue: @escaping @MainActor (Element) -> Void) -> SubscriptionType {
         subscribe(SubscriberType(
             onValue: receiveValue,
             onCompleted: nil,
@@ -131,9 +132,10 @@ public typealias UnfailablePublisherType<Element> = PublisherType<Element, Never
 
 /// Abstraction over subscription types from reactive frameworks.
 /// This abstraction uses concept similar to type-erasure or protocol witness pattern, wrapping the behaviour of concrete implementations and
-/// delegating to them once the wrapper funcions are called.
-public protocol SubscriptionType {
+/// delegating to them once the wrapper functions are called.
+public protocol SubscriptionType: Sendable {
     /// Stops the observation and clean up all resources
+    @MainActor
     func unsubscribe()
 }
 
@@ -184,7 +186,7 @@ func += <SC: SubscriptionCollection>(_ lhs: inout SC, _ rhs: SubscriptionType) {
 /// Abstraction over passthrough subject types (`PassthroughSubject`, `PublishSubject`, `Signal`) from reactive frameworks.
 /// This abstraction uses concept similar to type-erasure or protocol witness pattern, wrapping the behaviour of concrete implementations and
 /// delegating to them once the wrapper funcions are called.
-public struct SubjectType<Element, ErrorType: Error>: Sendable {
+public struct SubjectType<Element:Sendable, ErrorType: Error>: Sendable {
     /// Upstream publisher that feeds events into this subject
     public let publisher: PublisherType<Element, ErrorType>
 
@@ -211,7 +213,7 @@ public typealias UnfailableSubject<Element> = SubjectType<Element, Never>
 /// reactive frameworks.
 /// This abstraction uses concept similar to type-erasure or protocol witness pattern, wrapping the behaviour of concrete implementations and
 /// delegating to them once the wrapper funcions are called.
-public struct ReplayLastSubjectType<Element, ErrorType: Error>: Sendable {
+public struct ReplayLastSubjectType<Element: Sendable, ErrorType: Error>: Sendable {
     /// Upstream publisher that feeds data into this subject
     public let publisher: PublisherType<Element, ErrorType>
 
@@ -220,7 +222,7 @@ public struct ReplayLastSubjectType<Element, ErrorType: Error>: Sendable {
 
     /// Reads the most recent element emitted by this subject. This subject can be seen as a variable in stateful programming style, it holds one
     /// value that can be read at any point using a getter function `() -> Element`. Useful for bridging with the imperative world.
-    public var value: @Sendable () -> Element
+    public var value: @MainActor () -> Element
 
     /// Creates an abstraction over subject types able to keep the last object (`CurrentValueSubject`, `BehaviorSubject`, `MutableProperty`,
     /// `Variable`) from reactive frameworks.
@@ -233,7 +235,7 @@ public struct ReplayLastSubjectType<Element, ErrorType: Error>: Sendable {
     public init(
         publisher: PublisherType<Element, ErrorType>,
         subscriber: SubscriberType<Element, ErrorType>,
-        value: @escaping @Sendable () -> Element) {
+        value: @escaping @MainActor () -> Element) {
         self.publisher = publisher
         self.subscriber = subscriber
         self.value = value
@@ -244,7 +246,7 @@ extension ReplayLastSubjectType {
     /// Atomically mutate this subject's value in a closure where you can read and write the current element value
     /// - Parameter action: read and write the current value atomically, and optionally return something
     /// - Returns: returns whatever is returned by the action closure, allowing to chain operations
-    @discardableResult
+    @discardableResult @MainActor
     public func mutate<Result>(_ action: (inout Element) -> Result) -> Result {
         var currentValue = value()
         let result = action(&currentValue)
@@ -259,7 +261,7 @@ extension ReplayLastSubjectType {
     ///   - condition: a predicate that, after simulating the mutation, allows you to decide if it should happen or not
     ///   - action: read and write the current value atomically, and optionally return something
     /// - Returns: returns whatever is returned by the action closure, allowing to chain operations
-    @discardableResult
+    @discardableResult @MainActor
     public func mutate<Result>(when condition: @escaping (Result) -> Bool, action: (inout Element) -> Result) -> Result {
         var currentValue = value()
         let result = action(&currentValue)

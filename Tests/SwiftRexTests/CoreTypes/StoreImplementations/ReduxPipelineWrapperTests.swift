@@ -28,7 +28,7 @@ class ReduxPipelineWrapperTests: XCTestCase {
         }
 
         DispatchQueue.global().async {
-            sut.dispatch(actionToDispatch, from: .init(file: "file_1", function: "function_1", line: 1, info: "info_1"))
+            sut.dispatchAsync(actionToDispatch, from: .init(file: "file_1", function: "function_1", line: 1, info: "info_1"))
         }
 
         wait(for: [shouldCallMiddlewareActionHandler], timeout: 0.1)
@@ -65,7 +65,7 @@ class ReduxPipelineWrapperTests: XCTestCase {
         }
 
         DispatchQueue.global().async {
-            wrapperHolder.dispatch(actionToDispatch, from: .init(file: "file_1", function: "function_1", line: 1, info: "info_1"))
+            wrapperHolder.dispatchAsync(actionToDispatch, from: .init(file: "file_1", function: "function_1", line: 1, info: "info_1"))
         }
 
         wait(for: [shouldCallMiddlewareActionHandler], timeout: 0.1)
@@ -107,7 +107,7 @@ class ReduxPipelineWrapperTests: XCTestCase {
             state: { stateSubjectMock.subject },
             reducer: reducer,
             middleware: middlewareMock)
-        wrapper.dispatch(.bar(.alpha))
+        wrapper.dispatchAsync(.bar(.alpha))
 
         // Wait a short time for the async task to complete
         let expectation = expectation(description: "Get state verification")
@@ -146,7 +146,7 @@ class ReduxPipelineWrapperTests: XCTestCase {
         }
 
         DispatchQueue.global().async {
-            sut.dispatch(actionToDispatch, from: .here())
+            sut.dispatchAsync(actionToDispatch, from: .here())
         }
 
         wait(for: [shouldCallReducerActionHandler], timeout: 0.1)
@@ -174,7 +174,7 @@ class ReduxPipelineWrapperTests: XCTestCase {
             return reducedState
         }
 
-        sut.dispatch(.bar(.charlie), from: .here())
+        sut.dispatchAsync(.bar(.charlie), from: .here())
 
         wait(for: [shouldCallReducerActionHandler], timeout: 0.1)
         XCTAssertEqual(reducedState, stateSubjectMock.currentValue)
@@ -198,5 +198,14 @@ class ReduxPipelineWrapperTests: XCTestCase {
         }
 
         XCTAssertTrue(middlewareRef == nil, "middleware should be freed")
+    }
+}
+
+extension MainActorActionHandler {
+    
+    func dispatchAsync(_ action: ActionType, from dispatcher: ActionSource = .here()) {
+        Thread.asap {
+            self.dispatch(DispatchedAction(action, dispatcher: dispatcher))
+        }
     }
 }

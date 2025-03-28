@@ -1,6 +1,6 @@
 import SwiftRex
 
-class FooSubscription: SubscriptionType {
+final class FooSubscription: SubscriptionType {
     func unsubscribe() { }
 }
 

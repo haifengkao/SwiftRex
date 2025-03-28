@@ -33,7 +33,7 @@ class ReduxStoreProtocolTests: XCTestCase {
             reducer: reducer.0,
             middleware: middlewareMock)
 
-        sut.dispatch(actionToDispatch, from: .init(file: "file_1", function: "function_1", line: 666, info: "info_1"))
+        sut.dispatchAsync(actionToDispatch, from: .init(file: "file_1", function: "function_1", line: 666, info: "info_1"))
         wait(for: [shouldCallActionHandler, shouldCallReducer, shouldCallActionHandlerAfterReducer], timeout: 2, enforceOrder: true)
     }
 }

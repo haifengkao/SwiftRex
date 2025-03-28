@@ -33,14 +33,15 @@ import Foundation
 /// └────────┘ └────────┘ └────────┘
 /// ```
 @available(macOS 10.15, iOS 17.0, tvOS 17.0, watchOS 6.0, *)
-@Observable @MainActor
-open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: StoreType {
-    private let subscription: SubscriptionType?
+@Observable
+open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: StoreType, @unchecked Sendable {
+    private var subscription: SubscriptionType?
     private let store: StoreProjection<ViewAction, ViewState>
 
     public var state: ViewState
     public let statePublisher: UnfailablePublisherType<ViewState>
 
+    @MainActor
     public init<S>(initialState: ViewState, store: S, emitsValue: ShouldEmitValue<ViewState>)
     where S: StoreType, S.ActionType == ViewAction, S.StateType == ViewState {
         self.state = initialState
@@ -48,7 +49,7 @@ open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: Store
         self.statePublisher = store
             .statePublisher
             .removeDuplicates(by: emitsValue.shouldRemove)
-            .asPublisherType()
+            
         self.subscription =
             self.statePublisher.sink(
                 receiveValue: { [weak self] value in
@@ -57,15 +58,19 @@ open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: Store
             )
     }
     deinit {
-      subscription?.unsubscribe()
+        let unsubscribe = subscription?.unsubscribe
+        Task { @MainActor in
+            unsubscribe?()
+        }
     }
-    nonisolated open func dispatch(_ dispatchedAction: DispatchedAction<ViewAction>) {
+    open func dispatch(_ dispatchedAction: DispatchedAction<ViewAction>) {
         store.dispatch(dispatchedAction)
     }
 }
 
 @available(macOS 10.15, iOS 17.0, tvOS 17.0, watchOS 6.0, *)
 extension ObservableViewModel where ViewState: Equatable {
+    @MainActor
     public convenience init<S: StoreType>(initialState: ViewState, store: S)
     where S.ActionType == ViewAction, S.StateType == ViewState {
         self.init(
@@ -78,6 +83,7 @@ extension ObservableViewModel where ViewState: Equatable {
 
 @available(macOS 10.15, iOS 17.0, tvOS 13.0, watchOS 6.0, *)
 extension StoreType {
+    @MainActor
     public func asObservableViewModel(
         initialState: StateType,
         emitsValue: ShouldEmitValue<StateType>
@@ -88,6 +94,7 @@ extension StoreType {
 
 @available(macOS 10.15, iOS 17.0, tvOS 13.0, watchOS 6.0, *)
 extension StoreType where StateType: Equatable {
+    @MainActor
     public func asObservableViewModel(
         initialState: StateType
     ) -> ObservableViewModel<ActionType, StateType> {
@@ -124,6 +131,7 @@ extension ObservableViewModel {
     ///                     Defaults to do nothing.
     /// - Returns: a very simple ObservableViewModel mock, that you can inject in your SwiftUI View for tests or
     ///            live preview.
+    @MainActor
     public static func mock(state: StateType, action: (@escaping (ActionType, ActionSource, inout StateType) -> Void) = { _, _, _ in })
         -> ObservableViewModel<ActionType, StateType> {
         let subject = RexValueSubject<StateType, Never>(state)

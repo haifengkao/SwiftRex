@@ -2,15 +2,16 @@ import Foundation
 
 /// A subject that wraps a single value and publishes changes to subscribers
 /// This is designed to be a replacement for Combine's CurrentValueSubject to remove the dependency
-final class RexValueSubject<Output, Failure: Error>: @unchecked Sendable {
+@MainActor
+final class RexValueSubject<Element: Sendable, Failure: Error> {
     /// The current value
-    private var _value: Output
+    private var _value: Element
     
     /// List of subscribers
-    private var subscribers: [UUID: (Result<Output, Failure>) -> Void] = [:]
+    private var subscribers: [UUID: (Result<Element, Failure>) -> Void] = [:]
     
     /// Access to the current value
-    public var value: Output {
+    public var value: Element {
         get { _value }
         set {
             _value = newValue
@@ -20,13 +21,13 @@ final class RexValueSubject<Output, Failure: Error>: @unchecked Sendable {
     
     /// Initialize with a default value
     /// - Parameter value: The initial value to publish
-    public init(_ value: Output) {
+    public init(_ value: Element) {
         self._value = value
     }
     
     /// Send a new value to subscribers
     /// - Parameter value: The value to send
-    public func send(_ value: Output) {
+    public func send(_ value: Element) {
         _value = value
         subscribers.values.forEach { $0(.success(value)) }
     }
@@ -53,7 +54,7 @@ final class RexValueSubject<Output, Failure: Error>: @unchecked Sendable {
     /// - Parameter subscriber: The closure to call when values change
     /// - Returns: A subscription identifier that can be used to cancel
     @discardableResult
-    public func sink(receiveValue: @escaping (Output) -> Void) -> Subscription {
+    public func sink(receiveValue: @escaping (Element) -> Void) -> Subscription {
         let id = UUID()
         subscribers[id] = { result in
             if case .success(let value) = result {
@@ -78,7 +79,7 @@ final class RexValueSubject<Output, Failure: Error>: @unchecked Sendable {
     @discardableResult
     public func sink(
         receiveCompletion: @escaping (Result<Void, Failure>) -> Void,
-        receiveValue: @escaping (Output) -> Void
+        receiveValue: @escaping (Element) -> Void
     ) -> Subscription {
         let id = UUID()
         subscribers[id] = { result in
@@ -99,15 +100,15 @@ final class RexValueSubject<Output, Failure: Error>: @unchecked Sendable {
     }
     
     /// Represents a cancellable subscription
-    public struct Subscription {
-        private let cancellationClosure: () -> Void
+    public struct Subscription: SubscriptionType {
+        private let cancellationClosure: @MainActor () -> Void
         
-        init(_ cancellationClosure: @escaping () -> Void) {
+        init(_ cancellationClosure: @MainActor @escaping () -> Void) {
             self.cancellationClosure = cancellationClosure
         }
         
         /// Cancel the subscription
-        public func cancel() {
+        public func unsubscribe() {
             cancellationClosure()
         }
     }

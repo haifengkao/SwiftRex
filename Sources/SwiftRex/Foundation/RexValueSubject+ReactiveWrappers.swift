@@ -3,7 +3,7 @@ import Foundation
 extension RexValueSubject {
     /// Convert a RexValueSubject to a PublisherType
     /// This allows integration with the reactive wrapper system
-    public func asPublisherType() -> PublisherType<Output, Failure> {
+    public func asPublisherType() -> PublisherType<Element, Failure> {
         PublisherType { subscriber in
             let subscription = self.sink(
                 receiveCompletion: { result in
@@ -20,21 +20,21 @@ extension RexValueSubject {
             )
             
             subscriber.onSubscribe(AnySubscription {
-                subscription.cancel()
+                subscription.unsubscribe()
             })
             
             return AnySubscription {
-                subscription.cancel()
+                subscription.unsubscribe()
             }
         }
     }
     
     /// Convert a RexValueSubject to a ReplayLastSubjectType
     /// This allows integration with the reactive wrapper system
-    public func asReplayLastSubjectType() -> ReplayLastSubjectType<Output, Failure> {
+    public func asReplayLastSubjectType() -> ReplayLastSubjectType<Element, Failure> {
         ReplayLastSubjectType(
             publisher: self.asPublisherType(),
-            subscriber: SubscriberType<Output, Failure>(
+            subscriber: SubscriberType<Element, Failure>(
                 onValue: { [weak self] value in
                     self?.send(value)
                 },
@@ -46,26 +46,20 @@ extension RexValueSubject {
                 },
                 onSubscribe: { _ in }
             ),
-            value: { [weak self] in self?.value ?? self!._value }
+            value: { [weak self] in self?.value ?? self!.value }
         )
     }
 }
 
 /// A concrete implementation of SubscriptionType that can be used with our custom RexValueSubject
 private struct AnySubscription: SubscriptionType {
-    private let _unsubscribe: () -> Void
+    private let _unsubscribe: @MainActor () -> Void
     
-    init(_ unsubscribe: @escaping () -> Void) {
+    init(_ unsubscribe: @MainActor @escaping () -> Void) {
         self._unsubscribe = unsubscribe
     }
     
     func unsubscribe() {
         _unsubscribe()
-    }
-}
-
-extension RexValueSubject.Subscription: SubscriptionType {
-    public func unsubscribe() {
-        cancel()
     }
 }

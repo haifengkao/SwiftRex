@@ -14,6 +14,7 @@ public protocol ReduxStoreProtocol: AnyObject, StoreType {
 }
 
 extension ReduxStoreProtocol {
+    @MainActor
     public func dispatch(_ dispatchedAction: DispatchedAction<ActionType>) {
         pipeline.dispatch(dispatchedAction)
     }

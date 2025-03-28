@@ -1,11 +1,11 @@
 import Foundation
 import SwiftRex
 
-class SubscriptionItem: SubscriptionType {
+final class SubscriptionItem: SubscriptionType {
     let uuid = UUID()
-    var onUnsubscribe: (UUID) -> Void
+    let onUnsubscribe: @MainActor (UUID) -> Void
 
-    init(onUnsubscribe: @escaping (UUID) -> Void) {
+    init(onUnsubscribe: @escaping @MainActor (UUID) -> Void) {
         self.onUnsubscribe = onUnsubscribe
     }
 

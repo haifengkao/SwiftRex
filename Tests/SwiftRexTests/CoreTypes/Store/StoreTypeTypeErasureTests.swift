@@ -2,6 +2,7 @@ import Foundation
 @testable import SwiftRex
 import XCTest
 
+@MainActor
 class StoreTypeTypeErasureTests: XCTestCase {
     func testActionHandlerMockErased() {
         let mock = StoreTypeMock<String, Never>()
@@ -29,7 +30,7 @@ class StoreTypeTypeErasureTests: XCTestCase {
             actions.append(dispatchedAction.action)
         }
         let sut = AnyStoreType<String, Void>(
-            actionHandler: actionHandler.eraseAnyActionHandler(),
+            actionHandler: actionHandler,
             state: .init(subscribe: { _ in preconditionFailure("no state when it's never") })
         )
 
@@ -48,10 +49,10 @@ class StoreTypeTypeErasureTests: XCTestCase {
             actions.append(dispatchedAction.action)
         }
         let stringHandler = AnyStoreType<String, Never>(
-            actionHandler: actionHandler.eraseAnyActionHandler(),
+            actionHandler: actionHandler,
             state: .init(subscribe: { _ in preconditionFailure("no state when it's never") })
         )
-        let intHandler: AnyActionHandler<Int> = stringHandler.contramap { "\($0)" }
+        let intHandler: AnyMainActorActionHandler<Int> = stringHandler.contramap { "\($0)" }
 
         intHandler.dispatch(1, from: .here())
         intHandler.dispatch(2, from: .here())
@@ -72,7 +73,7 @@ class StoreTypeTypeErasureTests: XCTestCase {
             actions.append(dispatchedAction.action)
         }
         let stringHandler = AnyStoreType<String, Bool>(
-            actionHandler: actionHandler.eraseAnyActionHandler(),
+            actionHandler: actionHandler,
             state: publisher
         )
         let intHandler: AnyStoreType<Int, Bool> = stringHandler.contramapAction { "\($0)" }

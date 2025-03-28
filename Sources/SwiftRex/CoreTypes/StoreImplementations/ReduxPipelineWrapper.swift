@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ReduxPipelineWrapper<MiddlewareType: MiddlewareProtocol>: ActionHandler, Sendable
+public struct ReduxPipelineWrapper<MiddlewareType: MiddlewareProtocol>: MainActorActionHandler, Sendable
 where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
     public typealias ActionType = MiddlewareType.InputActionType
     public typealias StateType = MiddlewareType.StateType
@@ -26,8 +26,9 @@ where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
         handleAsap(dispatchedAction: dispatchedAction)
     }
 
+    @MainActor
     private func handleAsap(dispatchedAction: DispatchedAction<ActionType>) {
-        Thread.asap {
+        
             let io = Self.handle(
                 middleware: self.middleware,
                 reducer: self.reducer,
@@ -37,7 +38,7 @@ where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
             )
 
             Self.runIO(io, handler: { dispatchedAction in self.dispatch(dispatchedAction) })
-        }
+        
     }
 
     @MainActor
@@ -86,17 +87,5 @@ extension ReduxPipelineWrapper where StateType: Equatable {
         middleware: MiddlewareType
     ) {
         self.init(state: state, reducer: reducer, middleware: middleware, emitsValue: .whenDifferent)
-    }
-}
-
-extension Thread {
-    static func asap(_ block: @MainActor @escaping () -> Void) {
-        if Thread.isMainThread {
-            MainActor.assumeIsolated(block)
-        } else {
-            Task { @MainActor in
-                block()
-            }
-        }
     }
 }
