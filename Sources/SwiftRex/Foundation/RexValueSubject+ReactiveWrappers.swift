@@ -1,7 +1,7 @@
 import Foundation
 
-extension CurrentValueSubject {
-    /// Convert a CurrentValueSubject to a PublisherType
+extension RexValueSubject {
+    /// Convert a RexValueSubject to a PublisherType
     /// This allows integration with the reactive wrapper system
     public func asPublisherType() -> PublisherType<Output, Failure> {
         PublisherType { subscriber in
@@ -29,7 +29,7 @@ extension CurrentValueSubject {
         }
     }
     
-    /// Convert a CurrentValueSubject to a ReplayLastSubjectType
+    /// Convert a RexValueSubject to a ReplayLastSubjectType
     /// This allows integration with the reactive wrapper system
     public func asReplayLastSubjectType() -> ReplayLastSubjectType<Output, Failure> {
         ReplayLastSubjectType(
@@ -51,7 +51,7 @@ extension CurrentValueSubject {
     }
 }
 
-/// A concrete implementation of SubscriptionType that can be used with our custom CurrentValueSubject
+/// A concrete implementation of SubscriptionType that can be used with our custom RexValueSubject
 private struct AnySubscription: SubscriptionType {
     private let _unsubscribe: () -> Void
     
@@ -64,7 +64,7 @@ private struct AnySubscription: SubscriptionType {
     }
 }
 
-extension CurrentValueSubject.Subscription: SubscriptionType {
+extension RexValueSubject.Subscription: SubscriptionType {
     public func unsubscribe() {
         cancel()
     }

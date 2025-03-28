@@ -1,4 +1,3 @@
-
 import Foundation
 
 
@@ -127,7 +126,7 @@ extension ObservableViewModel {
     ///            live preview.
     public static func mock(state: StateType, action: (@escaping (ActionType, ActionSource, inout StateType) -> Void) = { _, _, _ in })
         -> ObservableViewModel<ActionType, StateType> {
-        let subject = CurrentValueSubject<StateType, Never>(state)
+        let subject = RexValueSubject<StateType, Never>(state)
 
         return AnyStoreType<ActionType, StateType>(
             action: { dispatchedAction in
@@ -140,4 +139,3 @@ extension ObservableViewModel {
     }
 }
 #endif
-

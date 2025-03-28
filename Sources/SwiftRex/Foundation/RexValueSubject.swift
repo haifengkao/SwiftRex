@@ -2,7 +2,7 @@ import Foundation
 
 /// A subject that wraps a single value and publishes changes to subscribers
 /// This is designed to be a replacement for Combine's CurrentValueSubject to remove the dependency
-final class CurrentValueSubject<Output, Failure: Error> {
+final class RexValueSubject<Output, Failure: Error>: @unchecked Sendable {
     /// The current value
     private var _value: Output
     
@@ -110,15 +110,5 @@ final class CurrentValueSubject<Output, Failure: Error> {
         public func cancel() {
             cancellationClosure()
         }
-    }
-}
-
-extension CurrentValueSubject.Subscription: Hashable {
-    public static func == (lhs: CurrentValueSubject.Subscription, rhs: CurrentValueSubject.Subscription) -> Bool {
-        ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(ObjectIdentifier(self))
     }
 }
