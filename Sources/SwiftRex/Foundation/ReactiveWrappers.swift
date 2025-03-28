@@ -83,6 +83,44 @@ public struct PublisherType<Element, ErrorType: Error>: @unchecked Sendable {
             )
         }
     }
+
+    /// Attaches a subscriber with closure-based behavior to a publisher that never fails.
+    /// This is similar to Combine's sink but returns a SubscriptionType instead of AnyCancellable.
+    /// - Parameter receiveValue: The closure to execute on receipt of a value.
+    /// - Returns: A SubscriptionType that you can use to cancel the subscription.
+    public func sink(receiveValue: @escaping @Sendable (Element) -> Void) -> SubscriptionType {
+        subscribe(SubscriberType(
+            onValue: receiveValue,
+            onCompleted: nil,
+            onSubscribe: nil
+        ))
+    }
+    
+    /// Publishes only elements that don't match the previous element, as evaluated by the given predicate.
+    /// - Parameter predicate: A closure that takes two consecutive elements and returns a Boolean value indicating whether they are considered equal.
+    /// - Returns: A publisher that publishes only elements that don't match the previous element.
+    public func removeDuplicates(by predicate: @escaping @Sendable (Element, Element) -> Bool) -> PublisherType<Element, ErrorType> {
+        .init { subscriber in
+            var previous: Element?
+            
+            return self.subscribe(
+                .init(
+                    onValue: { element in
+                        if let prev = previous {
+                            if !predicate(prev, element) {
+                                subscriber.onValue(element)
+                            }
+                        } else {
+                            subscriber.onValue(element)
+                        }
+                        previous = element
+                    },
+                    onCompleted: subscriber.onCompleted,
+                    onSubscribe: subscriber.onSubscribe
+                )
+            )
+        }
+    }
 }
 
 /// Abstraction over publisher/observable/signal producer types from reactive frameworks.
