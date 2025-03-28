@@ -32,7 +32,7 @@ import Foundation
 /// │  Text  │ │  List  │ │ForEach │
 /// └────────┘ └────────┘ └────────┘
 /// ```
-@available(macOS 10.15, iOS 17.0, tvOS 17.0, watchOS 6.0, *)
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 @Observable
 open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: StoreType, @unchecked Sendable {
     private var subscription: SubscriptionType?
@@ -68,7 +68,7 @@ open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: Store
     }
 }
 
-@available(macOS 10.15, iOS 17.0, tvOS 17.0, watchOS 6.0, *)
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 extension ObservableViewModel where ViewState: Equatable {
     @MainActor
     public convenience init<S: StoreType>(initialState: ViewState, store: S)
@@ -81,7 +81,7 @@ extension ObservableViewModel where ViewState: Equatable {
     }
 }
 
-@available(macOS 10.15, iOS 17.0, tvOS 13.0, watchOS 6.0, *)
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 extension StoreType {
     @MainActor
     public func asObservableViewModel(
@@ -92,7 +92,7 @@ extension StoreType {
     }
 }
 
-@available(macOS 10.15, iOS 17.0, tvOS 13.0, watchOS 6.0, *)
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 extension StoreType where StateType: Equatable {
     @MainActor
     public func asObservableViewModel(
@@ -103,7 +103,7 @@ extension StoreType where StateType: Equatable {
 }
 
 #if DEBUG
-@available(macOS 10.15, iOS 17.0, tvOS 13.0, watchOS 6.0, *)
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 extension ObservableViewModel {
     /// Mock for using in tests or SwiftUI previews, available in DEBUG mode only
     /// You can use if as a micro-redux for tests and SwiftUI previews, for example:
