@@ -3,7 +3,7 @@ import Foundation
 extension RexValueSubject {
     /// Convert a RexValueSubject to a PublisherType
     /// This allows integration with the reactive wrapper system
-    public func asPublisherType() -> PublisherType<Element, Failure> {
+    public nonisolated func asPublisherType() -> PublisherType<Element, Failure> {
         PublisherType { subscriber in
             let subscription = self.sink(
                 receiveCompletion: { result in
