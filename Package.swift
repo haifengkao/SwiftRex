@@ -5,7 +5,7 @@ let package = Package(
     name: "SwiftRex",
     platforms: [.macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6)],
     products: [
-        .library(name: "SwiftRex", targets: ["SwiftRex"])
+        .library(name: "CombineRex", targets: ["SwiftRex"])
         // .library(name: "CombineRex", targets: ["SwiftRex", "CombineRex"]),
         // .library(name: "ReactiveSwiftRex", targets: ["SwiftRex", "ReactiveSwiftRex"]),
         // .library(name: "RxSwiftRex", targets: ["SwiftRex", "RxSwiftRex"]),
@@ -15,8 +15,8 @@ let package = Package(
         // .library(name: "RxSwiftRexDynamic", type: .dynamic, targets: ["SwiftRex", "RxSwiftRex"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.2.0"),
-        .package(url: "https://github.com/ReactiveCocoa/ReactiveSwift.git", from: "7.0.0")
+        // .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.2.0"),
+        // .package(url: "https://github.com/ReactiveCocoa/ReactiveSwift.git", from: "7.0.0")
     ],
     targets: [
         .target(
