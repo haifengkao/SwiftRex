@@ -50,6 +50,13 @@ final class RexValueSubject<Element: Sendable, Failure: Error> {
         subscribers.values.forEach { $0(.failure(failure)) }
     }
     
+    /// Handle a new subscription
+    /// - Parameter subscription: The subscription to handle
+    public func send(subscription: SubscriptionType) {
+        // This method exists to maintain compatibility with code that previously used Combine
+        // In our new implementation, subscriptions are handled directly by the sink methods
+    }
+    
     /// Subscribe to value changes
     /// - Parameter subscriber: The closure to call when values change
     /// - Returns: A subscription identifier that can be used to cancel
