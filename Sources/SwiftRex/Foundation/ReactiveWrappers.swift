@@ -96,14 +96,14 @@ public struct PublisherType<Element: Sendable, ErrorType: Error>: Sendable {
             onSubscribe: nil
         ))
     }
-    
+
     /// Publishes only elements that don't match the previous element, as evaluated by the given predicate.
     /// - Parameter predicate: A closure that takes two consecutive elements and returns a Boolean value indicating whether they are considered equal.
     /// - Returns: A publisher that publishes only elements that don't match the previous element.
     public func removeDuplicates(by predicate: @escaping @Sendable (Element, Element) -> Bool) -> PublisherType<Element, ErrorType> {
         .init { subscriber in
             var previous: Element?
-            
+
             return self.subscribe(
                 .init(
                     onValue: { element in
@@ -186,7 +186,7 @@ func += <SC: SubscriptionCollection>(_ lhs: inout SC, _ rhs: SubscriptionType) {
 /// Abstraction over passthrough subject types (`PassthroughSubject`, `PublishSubject`, `Signal`) from reactive frameworks.
 /// This abstraction uses concept similar to type-erasure or protocol witness pattern, wrapping the behaviour of concrete implementations and
 /// delegating to them once the wrapper funcions are called.
-public struct SubjectType<Element:Sendable, ErrorType: Error>: Sendable {
+public struct SubjectType<Element: Sendable, ErrorType: Error>: Sendable {
     /// Upstream publisher that feeds events into this subject
     public let publisher: PublisherType<Element, ErrorType>
 

@@ -28,7 +28,6 @@ where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
 
     @MainActor
     private func handleAsap(dispatchedAction: DispatchedAction<ActionType>) {
-        
             let io = Self.handle(
                 middleware: self.middleware,
                 reducer: self.reducer,
@@ -38,7 +37,6 @@ where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
             )
 
             Self.runIO(io, handler: { dispatchedAction in self.dispatch(dispatchedAction) })
-        
     }
 
     @MainActor

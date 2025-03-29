@@ -46,7 +46,6 @@ extension MainActorActionHandler {
     }
 }
 
-
 extension Thread {
     static func asap(_ block: @MainActor @escaping () -> Void) {
         if Thread.isMainThread {

@@ -18,17 +18,17 @@ extension RexValueSubject {
                     subscriber.onValue(value)
                 }
             )
-            
+
             subscriber.onSubscribe(AnySubscription {
                 subscription.unsubscribe()
             })
-            
+
             return AnySubscription {
                 subscription.unsubscribe()
             }
         }
     }
-    
+
     /// Convert a RexValueSubject to a ReplayLastSubjectType
     /// This allows integration with the reactive wrapper system
     public func asReplayLastSubjectType() -> ReplayLastSubjectType<Element, Failure> {
@@ -54,11 +54,11 @@ extension RexValueSubject {
 /// A concrete implementation of SubscriptionType that can be used with our custom RexValueSubject
 private struct AnySubscription: SubscriptionType {
     private let _unsubscribe: @MainActor () -> Void
-    
+
     init(_ unsubscribe: @MainActor @escaping () -> Void) {
         self._unsubscribe = unsubscribe
     }
-    
+
     func unsubscribe() {
         _unsubscribe()
     }

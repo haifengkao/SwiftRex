@@ -1,6 +1,5 @@
 import Foundation
 
-
 /// A Store Projection made to be used in SwiftUI
 ///
 /// All you need is to create an instance of this class by projecting the main store and providing maps for state and
@@ -49,7 +48,7 @@ open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: Store
         self.statePublisher = store
             .statePublisher
             .removeDuplicates(by: emitsValue.shouldRemove)
-            
+
         self.subscription =
             self.statePublisher.sink(
                 receiveValue: { [weak self] value in

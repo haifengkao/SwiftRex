@@ -5,7 +5,7 @@ let package = Package(
     name: "SwiftRex",
     platforms: [.macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6)],
     products: [
-         .library(name: "SwiftRex", targets: ["SwiftRex"])
+        .library(name: "SwiftRex", targets: ["SwiftRex"])
         // .library(name: "CombineRex", targets: ["SwiftRex", "CombineRex"]),
         // .library(name: "ReactiveSwiftRex", targets: ["SwiftRex", "ReactiveSwiftRex"]),
         // .library(name: "RxSwiftRex", targets: ["SwiftRex", "RxSwiftRex"]),

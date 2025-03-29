@@ -152,7 +152,7 @@ class ObservableViewModelTests: XCTestCase, @unchecked Sendable {
         wait(for: [shouldBeNotified], timeout: 1)
         XCTAssertNotNil(subscription)
     }
-    
+
     @MainActor
     func testObservableViewModelShouldNotLeak() {
         weak var obVMWeakRef: ObservableViewModel<String, String>?
@@ -293,7 +293,6 @@ class ObservableViewModelTests: XCTestCase, @unchecked Sendable {
 //        XCTAssertNotNil(subscription4)
 //    }
 }
-
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 extension ReplayLastSubjectType {
