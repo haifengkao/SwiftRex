@@ -49,7 +49,6 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
-
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
         inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
         outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType,
@@ -108,7 +107,6 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
-    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
         outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType,
         state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
@@ -169,7 +167,6 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
-    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
         inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
         state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
@@ -231,7 +228,6 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
-    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
         inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?,
         outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType
@@ -290,7 +286,6 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
-    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
         inputAction inputActionMap: @escaping @Sendable (GlobalInputActionType) -> InputActionType?
     ) -> LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, Self>
@@ -346,7 +341,6 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
-    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
         outputAction outputActionMap: @escaping @Sendable (OutputActionType) -> GlobalOutputActionType
     ) -> LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, Self>
@@ -401,7 +395,6 @@ extension MiddlewareProtocol {
      - Returns: a `LiftMiddleware` that knows how to translate `Whole` to `Part` and vice-versa. To the external world this resulting middleware will
                 "speak" global types to be plugged into the main Store. Internally it will "speak" the types of the wrapped middleware.
      */
-    @MainActor
     public func lift<GlobalInputActionType, GlobalOutputActionType, GlobalStateType>(
         state stateMap: @escaping @Sendable (GlobalStateType) -> StateType
     ) -> LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, Self>

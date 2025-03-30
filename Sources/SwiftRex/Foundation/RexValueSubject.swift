@@ -3,7 +3,7 @@ import Foundation
 /// A subject that wraps a single value and publishes changes to subscribers
 /// This is designed to be a replacement for Combine's CurrentValueSubject to remove the dependency
 @MainActor
-final class RexValueSubject<Element: Sendable, Failure: Error> {
+public final class RexValueSubject<Element: Sendable, Failure: Error> {
     /// The current value
     private var _value: Element
 
