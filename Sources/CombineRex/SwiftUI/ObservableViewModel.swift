@@ -1,7 +1,4 @@
-#if canImport(Combine)
-import Combine
 import Foundation
-import SwiftRex
 
 /// A Store Projection made to be used in SwiftUI
 ///
@@ -34,14 +31,16 @@ import SwiftRex
 /// │  Text  │ │  List  │ │ForEach │
 /// └────────┘ └────────┘ └────────┘
 /// ```
-@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-open class ObservableViewModel<ViewAction, ViewState>: StoreType, ObservableObject {
-    private let cancellableBinding: AnyCancellable?
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+@Observable
+open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: StoreType, @unchecked Sendable {
+    private var subscription: SubscriptionType?
     private let store: StoreProjection<ViewAction, ViewState>
 
-    @Published public var state: ViewState
+    public var state: ViewState
     public let statePublisher: UnfailablePublisherType<ViewState>
 
+    @MainActor
     public init<S>(initialState: ViewState, store: S, emitsValue: ShouldEmitValue<ViewState>)
     where S: StoreType, S.ActionType == ViewAction, S.StateType == ViewState {
         self.state = initialState
@@ -49,8 +48,8 @@ open class ObservableViewModel<ViewAction, ViewState>: StoreType, ObservableObje
         self.statePublisher = store
             .statePublisher
             .removeDuplicates(by: emitsValue.shouldRemove)
-            .asPublisherType()
-        self.cancellableBinding =
+
+        self.subscription =
             self.statePublisher.sink(
                 receiveValue: { [weak self] value in
                     self?.state = value
@@ -58,15 +57,19 @@ open class ObservableViewModel<ViewAction, ViewState>: StoreType, ObservableObje
             )
     }
     deinit {
-      cancellableBinding?.cancel()
+        let unsubscribe = subscription?.unsubscribe
+        Task { @MainActor in
+            unsubscribe?()
+        }
     }
     open func dispatch(_ dispatchedAction: DispatchedAction<ViewAction>) {
         store.dispatch(dispatchedAction)
     }
 }
 
-@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 extension ObservableViewModel where ViewState: Equatable {
+    @MainActor
     public convenience init<S: StoreType>(initialState: ViewState, store: S)
     where S.ActionType == ViewAction, S.StateType == ViewState {
         self.init(
@@ -77,8 +80,9 @@ extension ObservableViewModel where ViewState: Equatable {
     }
 }
 
-@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 extension StoreType {
+    @MainActor
     public func asObservableViewModel(
         initialState: StateType,
         emitsValue: ShouldEmitValue<StateType>
@@ -87,8 +91,9 @@ extension StoreType {
     }
 }
 
-@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 extension StoreType where StateType: Equatable {
+    @MainActor
     public func asObservableViewModel(
         initialState: StateType
     ) -> ObservableViewModel<ActionType, StateType> {
@@ -97,7 +102,7 @@ extension StoreType where StateType: Equatable {
 }
 
 #if DEBUG
-@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 extension ObservableViewModel {
     /// Mock for using in tests or SwiftUI previews, available in DEBUG mode only
     /// You can use if as a micro-redux for tests and SwiftUI previews, for example:
@@ -125,9 +130,10 @@ extension ObservableViewModel {
     ///                     Defaults to do nothing.
     /// - Returns: a very simple ObservableViewModel mock, that you can inject in your SwiftUI View for tests or
     ///            live preview.
+    @MainActor
     public static func mock(state: StateType, action: (@escaping (ActionType, ActionSource, inout StateType) -> Void) = { _, _, _ in })
         -> ObservableViewModel<ActionType, StateType> {
-        let subject = CurrentValueSubject<StateType, Never>(state)
+        let subject = RexValueSubject<StateType, Never>(state)
 
         return AnyStoreType<ActionType, StateType>(
             action: { dispatchedAction in
@@ -139,6 +145,4 @@ extension ObservableViewModel {
         ).asObservableViewModel(initialState: state, emitsValue: .always)
     }
 }
-#endif
-
 #endif
