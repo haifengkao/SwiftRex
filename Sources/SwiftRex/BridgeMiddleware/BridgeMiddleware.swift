@@ -77,7 +77,8 @@ public func >=> <A, B, C>(_ left: @escaping (A) -> B?, _ right: @escaping (B) ->
     }
 }
 
-public class BridgeMiddleware<InputActionType, OutputActionType, StateType>: MiddlewareProtocol {
+@MainActor
+open class BridgeMiddleware<InputActionType: Sendable, OutputActionType: Sendable, StateType: Sendable>: MiddlewareProtocol {
     struct Bridge {
         let actionTransformation: (InputActionType, GetState<StateType>) -> OutputActionType?
         let statePredicate: (GetState<StateType>, InputActionType) -> Bool
@@ -86,7 +87,7 @@ public class BridgeMiddleware<InputActionType, OutputActionType, StateType>: Mid
 
     var bridges: [Bridge] = []
 
-    public init() { }
+    public nonisolated init() { }
 
     /// Bridge an action to another derived action
     ///
