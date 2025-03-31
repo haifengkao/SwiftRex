@@ -1,3 +1,4 @@
+import Foundation
 /**
  `MainActorActionHandler` defines a protocol for entities able to handle actions - defined by the associated type `ActionType`.
  This protocol inherits from MainActorActionHandler but doesn't add any additional requirements.
@@ -36,6 +37,12 @@ extension MainActorActionHandler {
     @MainActor
     public func dispatch(_ action: ActionType, from dispatcher: ActionSource) {
         self.dispatch(DispatchedAction(action, dispatcher: dispatcher))
+    }
+    
+    public func dispatchAsync(_ action: ActionType, from dispatcher: ActionSource) {
+        Thread.asap {
+            self.dispatch(action, from: dispatcher)
+        }
     }
 }
 
