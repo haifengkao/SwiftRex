@@ -164,7 +164,7 @@ class IntegrationWithComposableMiddlewareTests: XCTestCase {
             middleware: middleware
         )
     }
-    
+
     @MainActor
     func testIssue39WithComposedMiddleware() { // swiftlint:disable:this function_body_length
         let shouldBeNotifiedAboutInitialState = expectation(description: "should be notified about initial state")
@@ -220,4 +220,3 @@ class IntegrationWithComposableMiddlewareTests: XCTestCase {
         XCTAssertNotNil(subscription)
     }
 }
-

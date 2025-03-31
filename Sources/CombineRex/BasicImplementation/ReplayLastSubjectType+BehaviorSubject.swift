@@ -1,4 +1,3 @@
-
 import Foundation
 import SwiftRex
 
@@ -30,4 +29,3 @@ extension ReplayLastSubjectType {
               willChange: willChange)
     }
 }
-

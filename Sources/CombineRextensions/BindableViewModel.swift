@@ -38,7 +38,6 @@ public struct BindableViewModel<Action: Sendable, State: Sendable> {
                               line: line,
                               info: info,
                               onChange: actionClosure)
-
             } else {
                 return .getOnly(viewModel, state: path)
             }

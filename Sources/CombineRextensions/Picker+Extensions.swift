@@ -62,7 +62,6 @@ extension Picker where Label == Text {
         options: [SelectionValue],
         @ViewBuilder content: @escaping (SelectionValue) -> V
     ) where Content == ForEach<[SelectionValue], SelectionValue, V>, SelectionValue: PickerOptionProtocol {
-
         let binding: Binding<SelectionValue> = .store(
             viewModel,
             state: selectionKeyPath,
@@ -71,7 +70,7 @@ extension Picker where Label == Text {
             line: line,
             info: info,
             onChange: { (value: SelectionValue) in
-                return action(value.tag)
+                action(value.tag)
             }
         )
         self.init(

@@ -22,7 +22,7 @@ let package = Package(
         .target(name: "CombineRextensions", dependencies: ["CombineRex"]),
 
         .testTarget(name: "SwiftRexTests", dependencies: ["SwiftRex"]),
-        .testTarget(name: "CombineRexTests", dependencies: ["CombineRex"]),
+        .testTarget(name: "CombineRexTests", dependencies: ["CombineRex"])
     ],
     swiftLanguageModes: [.v6]
 )

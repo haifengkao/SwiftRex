@@ -19,7 +19,7 @@ precedencegroup ForwardComposition {
 /// Terminal object composition. Makes a Void out of anything.
 /// It's used in a composition to ignore whatever value is given.
 public func ignore<A>(_ a: A) {
-    return ()
+    ()
 }
 
 /// Apply a value into a function. Given a function from A to B, applying A will result in B.
@@ -29,7 +29,7 @@ public func |> <A, B>(_ value: A, f: @escaping (A) -> B) -> B {
 
 /// To compose two functions when the input of the second function matches the result of the first.
 public func >>> <A, B, C>(f: @escaping (A) -> B, g: @escaping (B) -> C) -> (A) -> C {
-    return { a in
+    { a in
         g(f(a))
     }
 }
@@ -228,7 +228,6 @@ open class BridgeMiddleware<InputActionType: Sendable, OutputActionType: Sendabl
                         )
                     )
                 }
-
         }
     }
 }

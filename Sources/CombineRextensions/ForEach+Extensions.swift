@@ -10,7 +10,6 @@ import CombineRex
 import SwiftUI
 
 extension ForEach where Content: View {
-
     /// Create a ForEach view that also receives the index of each row. Your collection should have identifiable elements.
     /// - Parameters:
     ///   - enumerated: the collection you want to iterate over
@@ -45,7 +44,6 @@ extension ForEach where Content: View {
 }
 
 extension ForEach where Content: View {
-
     /// Given a collection of identifiable elements in your view model, receive an action with ID and row action for each row view model
     /// - Parameters:
     ///   - viewModel: parent view model, holding the state that contains the collection we want to iterate over

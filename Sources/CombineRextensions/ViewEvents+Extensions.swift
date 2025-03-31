@@ -144,7 +144,7 @@ extension View {
         line: UInt = #line,
         info: String? = nil,
         perform action: @Sendable @escaping (K.Value) -> S.ActionType
-    ) -> some View where K.Value : Equatable {
+    ) -> some View where K.Value: Equatable {
         onPreferenceChange(key) {
             store.dispatchAsync(action($0), from: .init(file: file, function: function, line: line, info: info))
         }

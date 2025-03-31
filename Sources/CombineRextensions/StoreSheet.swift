@@ -24,7 +24,7 @@ extension View {
         path: KeyPath<State, Context?>,
         dismissAction: Action,
         producer: ViewProducer<Context, ContentView>) -> some View {
-        return sheet(
+        sheet(
             item: store.binding[path],
             onDismiss: { store.dispatch(dismissAction) },
             content: producer.view
@@ -52,7 +52,7 @@ extension View {
         function: String = #function,
         line: UInt = #line,
         info: String? = nil) -> some View {
-        return sheet(
+        sheet(
             item: store.binding[path],
             onDismiss: {
                 withAnimation {

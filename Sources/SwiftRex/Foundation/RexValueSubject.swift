@@ -6,16 +6,16 @@ import Foundation
 public final class RexValueSubject<Element: Sendable, Failure: Error> {
     /// The current value
     private var _value: Element
-    
+
     /// Completion state
-    private var completionState: Result<Void, Failure>? = nil
+    private var completionState: Result<Void, Failure>?
 
     /// List of subscribers for values
     private var valueSubscribers: [UUID: (Element) -> Void] = [:]
-    
+
     /// List of subscribers for errors
     private var errorSubscribers: [UUID: (Failure) -> Void] = [:]
-    
+
     /// List of subscribers for completion
     private var completionSubscribers: [UUID: () -> Void] = [:]
 
@@ -40,7 +40,7 @@ public final class RexValueSubject<Element: Sendable, Failure: Error> {
     public func send(_ value: Element) {
         guard completionState == nil else { return }
         _value = value
-        
+
         // Only notify value subscribers if not completed
         valueSubscribers.values.forEach { $0(value) }
     }
@@ -51,7 +51,7 @@ public final class RexValueSubject<Element: Sendable, Failure: Error> {
         // Only process completion once
         guard completionState == nil else { return }
         completionState = completion
-        
+
         switch completion {
         case .success:
             // Notify success completion handlers
@@ -82,7 +82,7 @@ public final class RexValueSubject<Element: Sendable, Failure: Error> {
     public func sink(receiveValue: @escaping (Element) -> Void) -> Subscription {
         let id = UUID()
         valueSubscribers[id] = receiveValue
-        
+
         // Immediately send current value to new subscriber if not completed
         if completionState == nil {
             receiveValue(_value)
@@ -107,12 +107,12 @@ public final class RexValueSubject<Element: Sendable, Failure: Error> {
         receiveValue: @escaping (Element) -> Void
     ) -> Subscription {
         let id = UUID()
-        
+
         // Split completion handling into success and failure 
         valueSubscribers[id] = receiveValue
         errorSubscribers[id] = { error in receiveCompletion(.failure(error)) }
         completionSubscribers[id] = { receiveCompletion(.success(())) }
-        
+
         // If already completed, immediately send completion
         if let state = completionState {
             receiveCompletion(state)
