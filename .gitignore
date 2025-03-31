@@ -105,3 +105,5 @@ Thumbs.db
 *.DSYM
 *.DSYM.zip
 *.dSYM.zip
+Package.resolved
+.swiftpm
