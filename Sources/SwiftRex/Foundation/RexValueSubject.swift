@@ -6,14 +6,24 @@ import Foundation
 public final class RexValueSubject<Element: Sendable, Failure: Error> {
     /// The current value
     private var _value: Element
+    
+    /// Completion state
+    private var completionState: Result<Void, Failure>? = nil
 
-    /// List of subscribers
-    private var subscribers: [UUID: (Result<Element, Failure>) -> Void] = [:]
+    /// List of subscribers for values
+    private var valueSubscribers: [UUID: (Element) -> Void] = [:]
+    
+    /// List of subscribers for errors
+    private var errorSubscribers: [UUID: (Failure) -> Void] = [:]
+    
+    /// List of subscribers for completion
+    private var completionSubscribers: [UUID: () -> Void] = [:]
 
     /// Access to the current value
-    var value: Element {
+    public var value: Element {
         get { _value }
         set {
+            guard completionState == nil else { return }
             _value = newValue
             send(newValue)
         }
@@ -21,38 +31,46 @@ public final class RexValueSubject<Element: Sendable, Failure: Error> {
 
     /// Initialize with a default value
     /// - Parameter value: The initial value to publish
-    init(_ value: Element) {
+    public init(_ value: Element) {
         self._value = value
     }
 
     /// Send a new value to subscribers
     /// - Parameter value: The value to send
-    func send(_ value: Element) {
+    public func send(_ value: Element) {
+        guard completionState == nil else { return }
         _value = value
-        subscribers.values.forEach { $0(.success(value)) }
+        
+        // Only notify value subscribers if not completed
+        valueSubscribers.values.forEach { $0(value) }
     }
 
     /// Send a completion to subscribers
     /// - Parameter completion: The completion to send
-    func send(completion: Result<Void, Failure>) {
+    public func send(completion: Result<Void, Failure>) {
+        // Only process completion once
+        guard completionState == nil else { return }
+        completionState = completion
+        
         switch completion {
         case .success:
-            // Do nothing, as we don't handle "completed" in this simplified implementation
-            break
+            // Notify success completion handlers
+            completionSubscribers.values.forEach { $0() }
         case .failure(let error):
-            subscribers.values.forEach { $0(.failure(error)) }
+            // Notify error handlers
+            errorSubscribers.values.forEach { $0(error) }
         }
     }
 
     /// Send a failure to subscribers
     /// - Parameter error: The error to send
-    func send(failure: Failure) {
-        subscribers.values.forEach { $0(.failure(failure)) }
+    public func send(failure: Failure) {
+        send(completion: .failure(failure))
     }
 
     /// Handle a new subscription
     /// - Parameter subscription: The subscription to handle
-    func send(subscription: SubscriptionType) {
+    public func send(subscription: SubscriptionType) {
         // This method exists to maintain compatibility with code that previously used Combine
         // In our new implementation, subscriptions are handled directly by the sink methods
     }
@@ -61,19 +79,19 @@ public final class RexValueSubject<Element: Sendable, Failure: Error> {
     /// - Parameter subscriber: The closure to call when values change
     /// - Returns: A subscription identifier that can be used to cancel
     @discardableResult
-    func sink(receiveValue: @escaping (Element) -> Void) -> Subscription {
+    public func sink(receiveValue: @escaping (Element) -> Void) -> Subscription {
         let id = UUID()
-        subscribers[id] = { result in
-            if case .success(let value) = result {
-                receiveValue(value)
-            }
+        valueSubscribers[id] = receiveValue
+        
+        // Immediately send current value to new subscriber if not completed
+        if completionState == nil {
+            receiveValue(_value)
         }
 
-        // Immediately send current value to new subscriber
-        receiveValue(_value)
-
         return Subscription { [weak self] in
-            self?.subscribers.removeValue(forKey: id)
+            self?.valueSubscribers.removeValue(forKey: id)
+            self?.errorSubscribers.removeValue(forKey: id)
+            self?.completionSubscribers.removeValue(forKey: id)
         }
     }
 
@@ -89,20 +107,24 @@ public final class RexValueSubject<Element: Sendable, Failure: Error> {
         receiveValue: @escaping (Element) -> Void
     ) -> Subscription {
         let id = UUID()
-        subscribers[id] = { result in
-            switch result {
-            case .success(let value):
-                receiveValue(value)
-            case .failure(let error):
-                receiveCompletion(.failure(error))
-            }
+        
+        // Split completion handling into success and failure 
+        valueSubscribers[id] = receiveValue
+        errorSubscribers[id] = { error in receiveCompletion(.failure(error)) }
+        completionSubscribers[id] = { receiveCompletion(.success(())) }
+        
+        // If already completed, immediately send completion
+        if let state = completionState {
+            receiveCompletion(state)
+        } else {
+            // Only send current value if not completed
+            receiveValue(_value)
         }
 
-        // Immediately send current value to new subscriber
-        receiveValue(_value)
-
         return Subscription { [weak self] in
-            self?.subscribers.removeValue(forKey: id)
+            self?.valueSubscribers.removeValue(forKey: id)
+            self?.errorSubscribers.removeValue(forKey: id)
+            self?.completionSubscribers.removeValue(forKey: id)
         }
     }
 

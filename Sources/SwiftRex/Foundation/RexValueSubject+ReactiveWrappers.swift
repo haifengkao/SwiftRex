@@ -41,8 +41,9 @@ extension RexValueSubject {
                 onCompleted: { [weak self] error in
                     if let error = error {
                         self?.send(failure: error)
+                    } else {
+                        self?.send(completion: .success(()))
                     }
-                    // No completion handling in this simplified implementation
                 },
                 onSubscribe: { _ in }
             ),
