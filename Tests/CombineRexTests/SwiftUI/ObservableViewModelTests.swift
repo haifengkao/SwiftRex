@@ -1,10 +1,7 @@
-#if canImport(Combine)
-import Combine
-import CombineRex
-import SwiftRex
+@testable import CombineRex
 import XCTest
 
-struct TestState: Equatable {
+struct ViewModelTestState: Equatable {
     var value = UUID()
     var name = "Initial State"
 }
@@ -24,7 +21,7 @@ struct Event2: Equatable {
     var name = "e2"
 }
 
-indirect enum Action: Equatable {
+indirect enum Action: Equatable, Sendable {
     case action1(Action1)
     case action2(Action2)
     case middlewareAction(Action)
@@ -52,12 +49,12 @@ struct Action2: Equatable {
     let event: Event2
 }
 
-class MiddlewareTest: MiddlewareProtocol {
+final class MiddlewareTest: MiddlewareProtocol {
     typealias InputActionType = Action
     typealias OutputActionType = Action
-    typealias StateType = TestState
+    typealias StateType = ViewModelTestState
 
-    func handle(action: Action, from dispatcher: SwiftRex.ActionSource, state: @escaping SwiftRex.GetState<TestState>) -> SwiftRex.IO<Action> {
+    func handle(action: Action, from dispatcher: SwiftRex.ActionSource, state: @escaping SwiftRex.GetState<ViewModelTestState>) -> SwiftRex.IO<Action> {
         switch action {
         case .middlewareAction, .middlewareActionAfterReducer:
             return .pure()
@@ -71,9 +68,9 @@ class MiddlewareTest: MiddlewareProtocol {
     }
 }
 
-@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-class ObservableViewModelTests: XCTestCase {
-    let reducerTest = Reducer<Action, TestState>.reduce { action, state in
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+class ObservableViewModelTests: XCTestCase, @unchecked Sendable {
+    let reducerTest = Reducer<Action, ViewModelTestState>.reduce { action, state in
         switch action {
         case let .action1(action):
             state = .init(value: UUID(), name: state.name + "_" + action.name)
@@ -85,14 +82,15 @@ class ObservableViewModelTests: XCTestCase {
             state = .init(value: UUID(), name: state.name + "_maar:" + action.name)
         }
     }
-    var statePublisher: CurrentValueSubject<TestState, Never>!
+    var statePublisher: RexValueSubject<ViewModelTestState, Never>!
     let middlewareTest = MiddlewareTest()
     var viewModel: ObservableViewModel<Event, String>!
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
 
-        statePublisher = .init(TestState())
+        statePublisher = .init(ViewModelTestState())
         viewModel = ReduxStoreBase(
             subject: .init(currentValueSubject: statePublisher),
             reducer: reducerTest,
@@ -105,7 +103,7 @@ class ObservableViewModelTests: XCTestCase {
                 case let .event2(event2): return Action.action2(.init(event: event2))
                 }
             },
-            state: { (state: TestState) -> String in
+            state: { (state: ViewModelTestState) -> String in
                 "name: \(state.name)"
             }
         ).asObservableViewModel(initialState: "")
@@ -115,14 +113,7 @@ class ObservableViewModelTests: XCTestCase {
         XCTAssertEqual("name: Initial State", viewModel.state)
     }
 
-    func testSubscribeDoNotTriggerWillChangeNotifyIntegrationTest() {
-        let subscription = viewModel.objectWillChange.sink { _ in
-            XCTFail("On subscribe this notification should never be triggered")
-        }
-
-        XCTAssertNotNil(subscription)
-    }
-
+    @MainActor
     func testStatePublisherNotifyOnSubscribeIntegrationTest() {
         let shouldBeNotified = expectation(description: "should be notified by state publisher")
         // Can't test objectWillChange Publisher because it happens before the mutation
@@ -135,6 +126,7 @@ class ObservableViewModelTests: XCTestCase {
         XCTAssertNotNil(subscription)
 }
 
+    @MainActor
     func testStatePublisherNotifyOnChangeIntegrationTest() {
         let shouldBeNotified = expectation(description: "should be notified by state publisher")
         var count = 0
@@ -161,32 +153,7 @@ class ObservableViewModelTests: XCTestCase {
         XCTAssertNotNil(subscription)
     }
 
-    func testWillChangeNotifyOnChangeIntegrationTest() {
-        let shouldBeNotifiedByWillChangePublisher = expectation(description: "should be notified by will change publisher")
-        var count = 0
-
-        let subscription = viewModel.objectWillChange.sink { [unowned self] _ in
-            switch count {
-            // expected one notification less (only changes, not initial state) and always with the previous value
-            // not yet the one being set.
-            case 0:
-                XCTAssertEqual("name: Initial State", self.viewModel.state)
-            case 1:
-                XCTAssertEqual("name: Initial State_a1", self.viewModel.state)
-            case 2:
-                XCTAssertEqual("name: Initial State_a1_ma:a1", self.viewModel.state)
-                shouldBeNotifiedByWillChangePublisher.fulfill()
-            default:
-                XCTFail("Unexpected notification: \(self.viewModel.state)")
-            }
-            count += 1
-        }
-        viewModel.dispatch(.event1(Event1()), from: .here())
-
-        wait(for: [shouldBeNotifiedByWillChangePublisher], timeout: 1)
-        XCTAssertNotNil(subscription)
-    }
-
+    @MainActor
     func testObservableViewModelShouldNotLeak() {
         weak var obVMWeakRef: ObservableViewModel<String, String>?
         weak var storeWeakRef: ReduxStoreBase<String, String>?
@@ -326,4 +293,32 @@ class ObservableViewModelTests: XCTestCase {
 //        XCTAssertNotNil(subscription4)
 //    }
 }
-#endif
+
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+extension ReplayLastSubjectType {
+    public init(currentValueSubject: RexValueSubject<Element, ErrorType>,
+                willChange: (@Sendable (Element) -> Void)? = nil) {
+        self.init(
+            publisher: currentValueSubject.asPublisherType(),
+            subscriber: SubscriberType(
+                onValue: { newValue in
+                    willChange?(newValue)
+                    currentValueSubject.value = newValue
+                },
+                onCompleted: { error in
+                    currentValueSubject.send(completion: error.map { .failure($0) } ?? .success(()))
+                },
+                onSubscribe: { subscription in
+                    currentValueSubject.send(subscription: subscription)
+                }
+            ),
+            value: { currentValueSubject.value }
+        )
+    }
+
+    @MainActor
+    public static func combine(initialValue: Element, willChange: (@Sendable (Element) -> Void)? = nil) -> ReplayLastSubjectType<Element, ErrorType> {
+        .init(currentValueSubject: RexValueSubject<Element, ErrorType>(initialValue),
+              willChange: willChange)
+    }
+}

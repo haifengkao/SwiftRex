@@ -4,12 +4,14 @@ import CombineRex
 import SwiftRex
 import XCTest
 
+@MainActor
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 class ReplayLastSubjectTypeBridgeTests: XCTestCase {
+    @MainActor
     func testCurrentValueSubjectToReplayLastSubjectTypeOnValue() {
         let shouldCallClosureValue = expectation(description: "Closure value should be called")
 
-        let currentValueSubject = CurrentValueSubject<String, SomeError>("no one cares 1")
+        let currentValueSubject = RexValueSubject<String, SomeError>("no one cares 1")
         currentValueSubject.value = "no one cares 2"
         currentValueSubject.value = "current value"
 
@@ -43,7 +45,7 @@ class ReplayLastSubjectTypeBridgeTests: XCTestCase {
         let shouldCallClosureValue = expectation(description: "Closure value should be called")
         let shouldCallClosureCompletion = expectation(description: "Closure completion should be called")
         let someError = SomeError()
-        let currentValueSubject = CurrentValueSubject<String, SomeError>("no one cares 1")
+        let currentValueSubject = RexValueSubject<String, SomeError>("no one cares 1")
         currentValueSubject.value = "no one cares 2"
         currentValueSubject.value = "current value"
 
@@ -74,7 +76,7 @@ class ReplayLastSubjectTypeBridgeTests: XCTestCase {
     func testCurrentValueSubjectToReplayLastSubjectTypeOnFinish() {
         let shouldCallClosureValue = expectation(description: "Closure value should be called")
         let shouldCallClosureCompletion = expectation(description: "Closure completion should be called")
-        let currentValueSubject = CurrentValueSubject<String, SomeError>("no one cares 1")
+        let currentValueSubject = RexValueSubject<String, SomeError>("no one cares 1")
         currentValueSubject.value = "no one cares 2"
         currentValueSubject.value = "current value"
 

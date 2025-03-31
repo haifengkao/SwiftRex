@@ -32,7 +32,7 @@ class IssueTracker39Tests: XCTestCase {
         case actions(MyAction)
     }
 
-    class MyMiddleware: MiddlewareProtocol {
+    class MyMiddleware: MiddlewareProtocol, @unchecked Sendable {
         typealias InputActionType = AppAction
         typealias OutputActionType = AppAction
         typealias StateType = MyState
@@ -113,8 +113,8 @@ class IssueTracker39Tests: XCTestCase {
     var reducer: Reducer<AppAction, MyState>!
     var store: ReduxStoreBase<AppAction, MyState>!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         middleware = MyMiddleware()
 
         reducer = Reducer<AppAction, MyState>.reduce { action, state in
@@ -142,13 +142,14 @@ class IssueTracker39Tests: XCTestCase {
             }
         }
 
-        store = ReduxStoreBase(
+        store = await ReduxStoreBase(
             subject: .combine(initialValue: MyState(preparation: .stopped, running: .stopped)),
             reducer: reducer,
             middleware: middleware
         )
     }
 
+    @MainActor
     func testIssue39() { // swiftlint:disable:this function_body_length
         let shouldBeNotifiedAboutInitialState = expectation(description: "should be notified about initial state")
         let shouldBeNotifiedAboutRequestedPrepare = expectation(description: "should be notified about requested prepare")

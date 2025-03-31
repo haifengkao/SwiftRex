@@ -4,7 +4,7 @@ import CombineRex
 import SwiftRex
 import XCTest
 
-@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 class IssueTracker42Tests: XCTestCase {
     struct AppState: Equatable, Codable {
         var int: Int
@@ -22,15 +22,16 @@ class IssueTracker42Tests: XCTestCase {
 
     var store: Store!
 
-    override func setUp() {
-        super.setUp()
-        store = Store(subject: .combine(initialValue: AppState(int: 0)),
+    override func setUp() async throws {
+        try await super.setUp()
+        store = await Store(subject: .combine(initialValue: AppState(int: 0)),
                       reducer: .reduce { _, state in
                           state.int += 1
                       },
                       middleware: IdentityMiddleware())
     }
 
+    @MainActor
     func testIssue42() {
         let shouldNotifyTwice = expectation(description: "should have been notified twice")
         shouldNotifyTwice.expectedFulfillmentCount = 2

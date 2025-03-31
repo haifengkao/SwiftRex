@@ -4,16 +4,18 @@ import Foundation
 import SwiftRex
 import XCTest
 
+
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 class IntegrationCounterTests: XCTestCase {
     var store: TestBasicStore!
-    var subscription: AnyCancellable?
+    var subscription: SubscriptionType?
 
-    override func setUp() {
-        super.setUp()
-        store = TestBasicStore()
+    override func setUp() async throws {
+        try await super.setUp()
+        store = await TestBasicStore()
     }
 
+    @MainActor
     func testDispatchToStore() {
         var stateChanges: [String] = []
         let shouldCallEightTimes = expectation(description: "sink closure should have been called 8 times")
@@ -100,7 +102,7 @@ enum CounterService {
         }
     }
 
-    class CounterMiddleware: MiddlewareProtocol {
+    class CounterMiddleware: MiddlewareProtocol, @unchecked Sendable {
         typealias InputActionType = AppAction.CounterEvent
         typealias OutputActionType = AppAction.CounterAction
         typealias StateType = Int

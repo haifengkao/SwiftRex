@@ -1,5 +1,3 @@
-#if canImport(Combine)
-import Combine
 import CombineRex
 import SwiftRex
 import XCTest
@@ -32,7 +30,7 @@ class IntegrationWithComposableMiddlewareTests: XCTestCase {
         case actions(MyAction)
     }
 
-    class MyEventsMiddleware: MiddlewareProtocol {
+    class MyEventsMiddleware: MiddlewareProtocol, @unchecked Sendable {
         typealias InputActionType = AppAction
         typealias OutputActionType = AppAction
         typealias StateType = MyState
@@ -80,7 +78,7 @@ class IntegrationWithComposableMiddlewareTests: XCTestCase {
         }
     }
 
-    class MyActionsMiddleware: MiddlewareProtocol {
+    class MyActionsMiddleware: MiddlewareProtocol, @unchecked Sendable {
         typealias InputActionType = AppAction
         typealias OutputActionType = AppAction
         typealias StateType = MyState
@@ -131,8 +129,8 @@ class IntegrationWithComposableMiddlewareTests: XCTestCase {
     var reducer: Reducer<AppAction, MyState>!
     var store: ReduxStoreBase<AppAction, MyState>!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         middleware = MyEventsMiddleware() <> MyActionsMiddleware()
 
         reducer = Reducer<AppAction, MyState>.reduce { action, state in
@@ -160,13 +158,14 @@ class IntegrationWithComposableMiddlewareTests: XCTestCase {
             }
         }
 
-        store = ReduxStoreBase(
+        store = await ReduxStoreBase(
             subject: .combine(initialValue: MyState(preparation: .stopped, running: .stopped)),
             reducer: reducer,
             middleware: middleware
         )
     }
-
+    
+    @MainActor
     func testIssue39WithComposedMiddleware() { // swiftlint:disable:this function_body_length
         let shouldBeNotifiedAboutInitialState = expectation(description: "should be notified about initial state")
         let shouldBeNotifiedAboutRequestedPrepare = expectation(description: "should be notified about requested prepare")
@@ -221,4 +220,4 @@ class IntegrationWithComposableMiddlewareTests: XCTestCase {
         XCTAssertNotNil(subscription)
     }
 }
-#endif
+
