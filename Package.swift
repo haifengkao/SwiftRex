@@ -10,7 +10,6 @@ let package = Package(
         .library(name: "BridgeMiddleware", targets: ["BridgeMiddleware"])
     ],
     dependencies: [
-        .package(url: "https://github.com/TeufelAudio/UIExtensions.git", from: "4.0.0")
     ],
     targets: [
         .target(
