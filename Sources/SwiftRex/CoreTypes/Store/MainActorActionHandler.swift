@@ -39,7 +39,7 @@ extension MainActorActionHandler {
         self.dispatch(DispatchedAction(action, dispatcher: dispatcher))
     }
 
-    public func dispatchAsync(_ action: ActionType, from dispatcher: ActionSource = .here()) {
+    public func `dispatchAsync`(_ action: ActionType, from dispatcher: ActionSource = .here()) {
         Thread.asap {
             self.dispatch(action, from: dispatcher)
         }
