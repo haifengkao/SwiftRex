@@ -103,6 +103,66 @@ extension StoreType where StateType: Equatable {
     }
 }
 
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+extension ObservableViewModel {
+    /// Creates a subset of the current store by applying any transformation to the State or Action types.
+    ///
+    /// - Parameters:
+    ///   - action: a closure that will transform the View Actions into global App Actions, to be dispatched in the original Store
+    ///   - state: a closure that will transform the global App State into the View State, to subscribe the original Store and drive the View upon
+    ///            changes
+    /// - Returns: a ``StoreProjection`` struct, that uses the original Store under the hood, by applying the required transformations on state and
+    ///            action when app state changes or view actions arrive. It doesn't store anything, just proxies the original store.
+    public func projection<SubViewAction: Sendable, SubViewState: Sendable>(
+        action viewActionToGlobalAction: @Sendable @escaping (SubViewAction) -> ViewAction?,
+        state globalStateToViewState: @MainActor @escaping (ViewState) -> SubViewState
+    ) -> StoreProjection<SubViewAction, SubViewState> {
+        .init(
+            action: { [store] dispatchedAction in
+                guard let globalAction = dispatchedAction.compactMap(viewActionToGlobalAction) else { return }
+                store.dispatch(globalAction)
+            },
+            state: self.statePublisher.map(globalStateToViewState)
+        )
+    }
+}
+
+@available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
+extension ObservableViewModel {
+    /// Create another ``StoreType`` that handles a different type of Action. The original store will be used behind the scenes, by only the provided
+    /// "transform" closure whenever an action arrives.
+    ///
+    /// - Parameters:
+    ///   - transform: a closure that will be executed every time an action arrives at the proxy ``StoreType``, so we can map it into the expected
+    ///                action type of the original ``StoreType``.
+    /// - Returns: an ``AnyStoreType`` with same `Statetype` but different `ActionType` than the original store.
+    public func contramapAction<NewActionType: Sendable>(_ transform: @escaping @Sendable (NewActionType) -> ActionType)
+    -> AnyStoreType<NewActionType, StateType> {
+        AnyStoreType(
+            action: { [store] dispatchedAction in
+                let oldAction = transform(dispatchedAction.action)
+                store.dispatch(oldAction, from: dispatchedAction.dispatcher)
+            },
+            state: self.statePublisher
+        )
+    }
+
+    /// Create another ``StoreType`` that handles a different type of State. The original store will be used behind the scenes, by only applying
+    /// the provided "transform" closure whenever the state changes in the original store.
+    ///
+    /// - Parameters:
+    ///   - transform: a closure that will be executed every time the state changes in the original store, so we can map it into the state type
+    ///                expected by the subscribers of the proxy ``StoreType``.
+    /// - Returns: an ``AnyStoreType`` with same `ActionType` but different `StateType` than the original store.
+    public func mapState<NewStateType>(_ transform: @Sendable @escaping (StateType) -> NewStateType)
+    -> AnyStoreType<ActionType, NewStateType> {
+        AnyStoreType(
+            action: store.dispatch,
+            state: self.statePublisher.map(transform)
+        )
+    }
+}
+
 #if DEBUG
 @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 extension ObservableViewModel {
