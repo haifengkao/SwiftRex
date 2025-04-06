@@ -11,16 +11,16 @@
 /// flexible for being lazy.
 /// For those familiar with Functional Programming, this is similar to Reader Monad, but as SwiftRex recommends dependencies only on Middlewares,
 /// this Reader works specifically with Middlewares.
-public struct MiddlewareReader<Dependencies, MiddlewareType: MiddlewareProtocol>: MiddlewareReaderProtocol {
+public struct MiddlewareReader<Dependencies: Sendable, MiddlewareType: MiddlewareProtocol>: MiddlewareReaderProtocol {
     /// An initializer function that, given the dependencies in the Middleware's init, will give the Middleware instance
     /// When inject is called, your MiddlewareReader materializes into a Middleware.
-    public let inject: (Dependencies) -> MiddlewareType
+    public let inject: @MainActor (Dependencies) -> MiddlewareType
 
     /// Allows to define a middleware initializer and store this initializer function until we have the dependencies to call it.
     /// This allows us to postpone the dependency injection and compose middlewares that are not even materialized yet.
     /// - Parameter inject: An initializer function that, given the dependencies in the Middleware's init, will give the Middleware instance
     ///                     When inject is called, your MiddlewareReader materializes into a Middleware.
-    public init(inject: @escaping (Dependencies) -> MiddlewareType) {
+    public init(inject: @MainActor @escaping (Dependencies) -> MiddlewareType) {
         self.inject = inject
     }
 }

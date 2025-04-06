@@ -19,7 +19,7 @@ extension StoreType {
     ///            action when app state changes or view actions arrive. It doesn't store anything, just proxies the original store.
     public func projection<ViewAction: Sendable, ViewState: Sendable>(
         action viewActionToGlobalAction: @Sendable @escaping (ViewAction) -> ActionType?,
-        state globalStateToViewState: @Sendable @escaping (StateType) -> ViewState
+        state globalStateToViewState: @MainActor @escaping (StateType) -> ViewState
     ) -> StoreProjection<ViewAction, ViewState> {
         .init(
             action: { dispatchedAction in
