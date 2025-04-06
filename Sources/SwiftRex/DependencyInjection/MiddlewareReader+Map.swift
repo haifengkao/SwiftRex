@@ -10,7 +10,7 @@ extension MiddlewareReaderProtocol {
     ///
     /// - Parameter transform: function that transforms original produced Middleware into a new one, once the dependencies are injected
     /// - Returns: a new `MiddlewareReader` that will create not the original MiddlewareType any more, but a NewMiddleware mapped from the original
-    public func mapMiddleware<NewMiddleware: MiddlewareProtocol>(_ transform: @escaping (MiddlewareType) -> NewMiddleware)
+    public func mapMiddleware<NewMiddleware: MiddlewareProtocol>(_ transform: @Sendable @escaping (MiddlewareType) -> NewMiddleware)
     -> MiddlewareReader<Dependencies, NewMiddleware> {
         MiddlewareReader<Dependencies, NewMiddleware> { environment in
             transform(self.inject(environment))
@@ -34,7 +34,7 @@ extension MiddlewareReaderProtocol {
     /// - Returns: a new `MiddlewareReader` that will require the full `World` to create the `MiddlewareType`. It can be combined with others that
     ///            also depend on the same `World`, so this is useful for composition as you eventually want to combine all sorts of middlewares that
     ///            have different dependencies, so this is for finding a common ground for all of them.
-    public func contramapDependecies<World>(_ extractOnlyDependenciesNeededForThisMiddleware: @escaping (World) -> Dependencies)
+    public func contramapDependecies<World>(_ extractOnlyDependenciesNeededForThisMiddleware: @Sendable @escaping (World) -> Dependencies)
     -> MiddlewareReader<World, MiddlewareType> {
         MiddlewareReader<World, MiddlewareType> { world in
             self.inject(extractOnlyDependenciesNeededForThisMiddleware(world))
@@ -64,8 +64,8 @@ extension MiddlewareReaderProtocol {
     ///            composition as you eventually want to combine all sorts of middlewares that have different dependencies, so this is for finding a
     ///            common ground for all of them.
     public func dimap<NewMiddleware: MiddlewareProtocol, World>(
-        transformMiddleware: @escaping (MiddlewareType) -> NewMiddleware,
-        extractOnlyDependenciesNeededForThisMiddleware: @escaping (World) -> Dependencies
+        transformMiddleware: @Sendable @escaping (MiddlewareType) -> NewMiddleware,
+        extractOnlyDependenciesNeededForThisMiddleware: @Sendable @escaping (World) -> Dependencies
     )
     -> MiddlewareReader<World, NewMiddleware> {
         mapMiddleware(transformMiddleware).contramapDependecies(extractOnlyDependenciesNeededForThisMiddleware)
@@ -79,7 +79,7 @@ extension MiddlewareReaderProtocol {
     ///                        that produces a different middleware, as long as their dependencies are the same
     /// - Returns: a flatten `MiddlewareReader` with transformation applied and dependencies injected in the original middleware reader, the produced
     ///            middleware given to the transform function and injected again.
-    public func flatMap<NewMiddlewareReader: MiddlewareReaderProtocol>(_ transform: @escaping (MiddlewareType) -> NewMiddlewareReader)
+    public func flatMap<NewMiddlewareReader: MiddlewareReaderProtocol>(_ transform: @Sendable @escaping (MiddlewareType) -> NewMiddlewareReader)
     -> NewMiddlewareReader where NewMiddlewareReader.Dependencies == Dependencies {
         NewMiddlewareReader { environment in
             transform(self.inject(environment)).inject(environment)

@@ -50,7 +50,7 @@ extension MiddlewareReaderProtocol {
         inputAction inputActionMap: @Sendable @escaping (GlobalInputActionType) -> MiddlewareType.InputActionType?,
         outputAction outputActionMap: @Sendable @escaping (MiddlewareType.OutputActionType) -> GlobalOutputActionType,
         state stateMap: @Sendable @escaping (GlobalStateType) -> MiddlewareType.StateType,
-        dependencies dependenciesMap: @escaping (GlobalDependencies) -> Dependencies
+        dependencies dependenciesMap: @Sendable @escaping (GlobalDependencies) -> Dependencies
     ) -> MiddlewareReader<GlobalDependencies, LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, GlobalStateType, MiddlewareType>> {
         dimap(
             transformMiddleware: {
@@ -104,7 +104,7 @@ extension MiddlewareReaderProtocol {
     public func lift<GlobalDependencies, GlobalOutputActionType, GlobalStateType>(
         outputAction outputActionMap: @Sendable @escaping (MiddlewareType.OutputActionType) -> GlobalOutputActionType,
         state stateMap: @Sendable @escaping (GlobalStateType) -> MiddlewareType.StateType,
-        dependencies dependenciesMap: @escaping (GlobalDependencies) -> Dependencies
+        dependencies dependenciesMap: @Sendable @escaping (GlobalDependencies) -> Dependencies
     ) -> MiddlewareReader<
         GlobalDependencies,
         LiftMiddleware<MiddlewareType.InputActionType, GlobalOutputActionType, GlobalStateType, MiddlewareType>
@@ -161,7 +161,7 @@ extension MiddlewareReaderProtocol {
     public func lift<GlobalDependencies, GlobalInputActionType, GlobalStateType>(
         inputAction inputActionMap: @Sendable @escaping (GlobalInputActionType) -> MiddlewareType.InputActionType?,
         state stateMap: @Sendable @escaping (GlobalStateType) -> MiddlewareType.StateType,
-        dependencies dependenciesMap: @escaping (GlobalDependencies) -> Dependencies
+        dependencies dependenciesMap: @Sendable @escaping (GlobalDependencies) -> Dependencies
     ) -> MiddlewareReader<
         GlobalDependencies,
         LiftMiddleware<GlobalInputActionType, MiddlewareType.OutputActionType, GlobalStateType, MiddlewareType>
@@ -218,7 +218,7 @@ extension MiddlewareReaderProtocol {
     public func lift<GlobalDependencies, GlobalInputActionType, GlobalOutputActionType>(
         inputAction inputActionMap: @Sendable @escaping (GlobalInputActionType) -> MiddlewareType.InputActionType?,
         outputAction outputActionMap: @Sendable @escaping (MiddlewareType.OutputActionType) -> GlobalOutputActionType,
-        dependencies dependenciesMap: @escaping (GlobalDependencies) -> Dependencies
+        dependencies dependenciesMap: @Sendable @escaping (GlobalDependencies) -> Dependencies
     ) -> MiddlewareReader<
         GlobalDependencies,
         LiftMiddleware<GlobalInputActionType, GlobalOutputActionType, MiddlewareType.StateType, MiddlewareType>
@@ -317,7 +317,7 @@ extension MiddlewareReaderProtocol {
     ///            even before injecting the dependencies.
     public func lift<GlobalDependencies, GlobalStateType>(
         state stateMap: @Sendable @escaping (GlobalStateType) -> MiddlewareType.StateType,
-        dependencies dependenciesMap: @escaping (GlobalDependencies) -> Dependencies
+        dependencies dependenciesMap: @Sendable @escaping (GlobalDependencies) -> Dependencies
     ) -> MiddlewareReader<
         GlobalDependencies,
         LiftMiddleware<MiddlewareType.InputActionType, MiddlewareType.OutputActionType, GlobalStateType, MiddlewareType>
@@ -363,7 +363,7 @@ extension MiddlewareReaderProtocol {
     ///            even before injecting the dependencies.
     public func lift<GlobalDependencies, GlobalOutputActionType>(
         outputAction outputActionMap: @Sendable @escaping (MiddlewareType.OutputActionType) -> GlobalOutputActionType,
-        dependencies dependenciesMap: @escaping (GlobalDependencies) -> Dependencies
+        dependencies dependenciesMap: @Sendable @escaping (GlobalDependencies) -> Dependencies
     ) -> MiddlewareReader<
         GlobalDependencies,
         LiftMiddleware<MiddlewareType.InputActionType, GlobalOutputActionType, MiddlewareType.StateType, MiddlewareType>
@@ -451,7 +451,7 @@ extension MiddlewareReaderProtocol {
     ///            even before injecting the dependencies.
     public func lift<GlobalDependencies, GlobalInputActionType>(
         inputAction inputActionMap: @Sendable @escaping (GlobalInputActionType) -> MiddlewareType.InputActionType?,
-        dependencies dependenciesMap: @escaping (GlobalDependencies) -> Dependencies
+        dependencies dependenciesMap: @Sendable @escaping (GlobalDependencies) -> Dependencies
     ) -> MiddlewareReader<
         GlobalDependencies,
         LiftMiddleware<GlobalInputActionType, MiddlewareType.OutputActionType, MiddlewareType.StateType, MiddlewareType>
@@ -608,7 +608,7 @@ extension MiddlewareReaderProtocol {
     /// - Returns: a `MiddlewareReader` that works on global types, so it can be composed with other MiddlewareReaders matching same global types
     ///            even before injecting the dependencies.
     public func lift<GlobalDependencies>(
-        dependencies dependenciesMap: @escaping (GlobalDependencies) -> Dependencies
+        dependencies dependenciesMap: @Sendable @escaping (GlobalDependencies) -> Dependencies
     ) -> MiddlewareReader<GlobalDependencies, MiddlewareType> {
         contramapDependecies(dependenciesMap)
     }

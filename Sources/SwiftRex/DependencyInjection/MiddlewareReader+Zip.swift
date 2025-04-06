@@ -13,7 +13,7 @@ extension MiddlewareReaderProtocol {
     public static func zip<M1: MiddlewareReaderProtocol, M2: MiddlewareReaderProtocol, MOutput: MiddlewareProtocol>(
         _ reader1: M1,
         _ reader2: M2,
-        with map: @escaping (M1.MiddlewareType, M2.MiddlewareType) -> MOutput
+        with map: @Sendable @escaping (M1.MiddlewareType, M2.MiddlewareType) -> MOutput
     ) -> MiddlewareReader<M1.Dependencies, MOutput> where M1.Dependencies == M2.Dependencies {
         MiddlewareReader { environment in
             map(reader1.inject(environment), reader2.inject(environment))
@@ -34,7 +34,7 @@ extension MiddlewareReaderProtocol {
         _ reader1: M1,
         _ reader2: M2,
         _ reader3: M3,
-        with map: @escaping (M1.MiddlewareType, M2.MiddlewareType, M3.MiddlewareType) -> MOutput
+        with map: @Sendable @escaping (M1.MiddlewareType, M2.MiddlewareType, M3.MiddlewareType) -> MOutput
     ) -> MiddlewareReader<M1.Dependencies, MOutput> where M1.Dependencies == M2.Dependencies, M1.Dependencies == M3.Dependencies {
         MiddlewareReader { environment in
             map(reader1.inject(environment), reader2.inject(environment), reader3.inject(environment))
@@ -63,7 +63,7 @@ extension MiddlewareReaderProtocol {
         _ reader2: M2,
         _ reader3: M3,
         _ reader4: M4,
-        with map: @escaping (M1.MiddlewareType, M2.MiddlewareType, M3.MiddlewareType, M4.MiddlewareType) -> MOutput
+        with map: @Sendable @escaping (M1.MiddlewareType, M2.MiddlewareType, M3.MiddlewareType, M4.MiddlewareType) -> MOutput
     ) -> MiddlewareReader<M1.Dependencies, MOutput>
     where M1.Dependencies == M2.Dependencies, M1.Dependencies == M3.Dependencies, M1.Dependencies == M4.Dependencies {
         MiddlewareReader { environment in
@@ -96,7 +96,7 @@ extension MiddlewareReaderProtocol {
         _ reader3: M3,
         _ reader4: M4,
         _ reader5: M5,
-        with map: @escaping (M1.MiddlewareType, M2.MiddlewareType, M3.MiddlewareType, M4.MiddlewareType, M5.MiddlewareType) -> MOutput
+        with map: @Sendable @escaping (M1.MiddlewareType, M2.MiddlewareType, M3.MiddlewareType, M4.MiddlewareType, M5.MiddlewareType) -> MOutput
     ) -> MiddlewareReader<M1.Dependencies, MOutput>
     where M1.Dependencies == M2.Dependencies, M1.Dependencies == M3.Dependencies, M1.Dependencies == M4.Dependencies,
           M1.Dependencies == M5.Dependencies {
@@ -139,7 +139,7 @@ extension MiddlewareReaderProtocol {
         _ reader4: M4,
         _ reader5: M5,
         _ reader6: M6,
-        with map: @escaping (
+        with map: @Sendable @escaping (
             M1.MiddlewareType, M2.MiddlewareType, M3.MiddlewareType, M4.MiddlewareType, M5.MiddlewareType, M6.MiddlewareType
         ) -> MOutput
     ) -> MiddlewareReader<M1.Dependencies, MOutput>
@@ -188,7 +188,7 @@ extension MiddlewareReaderProtocol {
         _ reader5: M5,
         _ reader6: M6,
         _ reader7: M7,
-        with map: @escaping (
+        with map: @Sendable @escaping (
             M1.MiddlewareType, M2.MiddlewareType, M3.MiddlewareType, M4.MiddlewareType, M5.MiddlewareType, M6.MiddlewareType, M7.MiddlewareType
         ) -> MOutput
     ) -> MiddlewareReader<M1.Dependencies, MOutput>
@@ -241,7 +241,7 @@ extension MiddlewareReaderProtocol {
         _ reader6: M6,
         _ reader7: M7,
         _ reader8: M8,
-        with map: @escaping (
+        with map: @Sendable @escaping (
             M1.MiddlewareType, M2.MiddlewareType, M3.MiddlewareType, M4.MiddlewareType, M5.MiddlewareType, M6.MiddlewareType, M7.MiddlewareType,
             M8.MiddlewareType
         ) -> MOutput
@@ -300,7 +300,7 @@ extension MiddlewareReaderProtocol {
         _ reader7: M7,
         _ reader8: M8,
         _ reader9: M9,
-        with map: @escaping (
+        with map: @Sendable @escaping (
             M1.MiddlewareType, M2.MiddlewareType, M3.MiddlewareType, M4.MiddlewareType, M5.MiddlewareType, M6.MiddlewareType, M7.MiddlewareType,
             M8.MiddlewareType, M9.MiddlewareType
         ) -> MOutput
@@ -363,7 +363,7 @@ extension MiddlewareReaderProtocol {
         _ reader8: M8,
         _ reader9: M9,
         _ reader10: M10,
-        with map: @escaping (
+        with map: @Sendable @escaping (
             M1.MiddlewareType, M2.MiddlewareType, M3.MiddlewareType, M4.MiddlewareType, M5.MiddlewareType, M6.MiddlewareType, M7.MiddlewareType,
             M8.MiddlewareType, M9.MiddlewareType, M10.MiddlewareType
         ) -> MOutput
