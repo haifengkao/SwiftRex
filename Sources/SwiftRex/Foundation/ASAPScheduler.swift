@@ -9,7 +9,7 @@ import Foundation
 /// as soon as its new RunLoop starts (depending on the DispatchQueue.SchedulerOptions provided).
 /// Use ``ASAPScheduler.default`` in order to use this Scheduler.
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-public struct ASAPScheduler: @unchecked Sendable {
+public struct ASAPScheduler: Sendable {
     public static let `default` = ASAPScheduler()
 
     private init() {
