@@ -72,7 +72,7 @@ public struct PublisherType<Element: Sendable, ErrorType: Error>: Sendable {
     /// Maps elements emitted by the upstream into a new element type, given by the transform function provided by you
     /// - Parameter transform: a function that transforms each element emitted by the upstream into a new element
     /// - Returns: a derived publisher that emits values of the new type, by applying the transform function provided by you
-    public nonisolated func map<NewElement>(_ transform: @escaping @Sendable (Element) -> NewElement) -> PublisherType<NewElement, ErrorType> {
+    public nonisolated func map<NewElement>(_ transform: @escaping @MainActor (Element) -> NewElement) -> PublisherType<NewElement, ErrorType> {
         .init { subscriber in
             self.subscribe(
                 .init(
