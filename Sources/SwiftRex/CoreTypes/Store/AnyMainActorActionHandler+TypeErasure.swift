@@ -6,12 +6,12 @@ import Foundation
 /// The only protocol requirement is a function that allows other entities to dispatch actions, so Views (or Presenters,
 /// ViewModels) in your UI layer, or even Middlewares can create actions of a certain type and send to your store, that
 /// is generalized by this protocol.
-public struct AnyMainActorActionHandler<ActionType: Sendable>: MainActorActionHandler {
+public struct AnyMainActorActionHandler<ActionType: Sendable>: SendableMainActorActionHandler {
     private let realHandler: @MainActor (DispatchedAction<ActionType>) -> Void
 
     /// Erases the provided `MainActorActionHandler` by using its inner methods from this wrapper
     /// - Parameter realHandler: the concrete `MainActorActionHandler` you're erasing
-    public init<A: MainActorActionHandler>(_ realHandler: A) where A.ActionType == ActionType {
+    public init<A: SendableMainActorActionHandler>(_ realHandler: A) where A.ActionType == ActionType {
         self.init(realHandler.dispatch)
     }
 
@@ -31,7 +31,7 @@ public struct AnyMainActorActionHandler<ActionType: Sendable>: MainActorActionHa
     }
 }
 
-extension MainActorActionHandler {
+extension SendableMainActorActionHandler {
     /// Erases the provided `MainActorActionHandler` by using its inner methods from a newly created wrapper of type `AnyActionHandler`
     public func eraseAnyMainActorActionHandler() -> AnyMainActorActionHandler<ActionType> {
         AnyMainActorActionHandler(self)

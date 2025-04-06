@@ -1,7 +1,7 @@
 /// A protocol that defines the two expected roles of a "Store": receive/distribute actions (``ActionHandler``); and publish changes of the the
 /// current app state (``StateProvider``) to possible subscribers. It can be a real store (such as ``ReduxStoreBase``) or just a "proxy" that acts on
 /// behalf of a real store, for example, in the case of ``StoreProjection``.
-public protocol StoreType: StateProvider, MainActorActionHandler { }
+public protocol StoreType: StateProvider, SendableMainActorActionHandler { }
 
 extension StoreType {
     /// Create another ``StoreType`` that handles a different type of Action. The original store will be used behind the scenes, by only the provided

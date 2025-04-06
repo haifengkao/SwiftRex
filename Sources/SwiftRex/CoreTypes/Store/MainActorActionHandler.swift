@@ -4,12 +4,14 @@ import Foundation
  This protocol inherits from MainActorActionHandler but doesn't add any additional requirements.
  It exists for backward compatibility with existing code.
  */
-public protocol MainActorActionHandler: Sendable {
+public protocol MainActorActionHandler {
     associatedtype ActionType: Sendable
 
     @MainActor
     func dispatch(_ dispatchedAction: DispatchedAction<ActionType>)
 }
+
+public protocol SendableMainActorActionHandler: MainActorActionHandler, Sendable {}
 
 extension MainActorActionHandler {
     /// The function that allows Views, ViewControllers, Presenters to dispatch actions to the store.
@@ -39,20 +41,21 @@ extension MainActorActionHandler {
         self.dispatch(DispatchedAction(action, dispatcher: dispatcher))
     }
 
-    public func `dispatchAsync`(_ action: ActionType, from dispatcher: ActionSource = .here()) {
-        Thread.asap {
-            self.dispatch(action, from: dispatcher)
-        }
-    }
 }
 
-extension MainActorActionHandler {
+extension MainActorActionHandler where Self: Sendable {
     /// Pullback an `MainActorActionHandler` working in a local action context, into a new `MainActorActionHandler` working in a more global action context.
     /// - Parameter transform: a function that allows to go from a global action to a local action
     /// - Returns: a new `MainActorActionHandler` that knows how to handle the new action type
     public func contramap<NewActionType>(_ transform: @escaping @Sendable (NewActionType) -> ActionType) -> AnyMainActorActionHandler<NewActionType> {
         AnyMainActorActionHandler { [self] dispatchedAction in
             self.dispatch(dispatchedAction.map(transform))
+        }
+    }
+    
+    public func `dispatchAsync`(_ action: ActionType, from dispatcher: ActionSource = .here()) {
+        Thread.asap {
+            self.dispatch(action, from: dispatcher)
         }
     }
 }
