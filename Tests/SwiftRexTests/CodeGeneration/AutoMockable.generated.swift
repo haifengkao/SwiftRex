@@ -21,16 +21,16 @@ import AppKit
 
 
 
-final class ActionHandlerMock<ActionType: Sendable>: SendableActionHandler, @unchecked Sendable {
+final class ActionHandlerMock<ActionType: Sendable>: SendableActionHandler {
 
     //MARK: - dispatch
 
-    var dispatchCallsCount = 0
+    nonisolated(unsafe) var dispatchCallsCount = 0
     var dispatchCalled: Bool {
         return dispatchCallsCount > 0
     }
-    var dispatchReceivedDispatchedAction: DispatchedAction<ActionType>?
-    var dispatchClosure: ((DispatchedAction<ActionType>) -> Void)?
+    nonisolated(unsafe) var dispatchReceivedDispatchedAction: DispatchedAction<ActionType>?
+    nonisolated(unsafe) var dispatchClosure: ((DispatchedAction<ActionType>) -> Void)?
 
     func dispatch(_ dispatchedAction: DispatchedAction<ActionType>) {
         dispatchCallsCount += 1
@@ -59,6 +59,10 @@ class MiddlewareProtocolMock<InputActionType: Sendable, OutputActionType: Sendab
 
 }
 final class ReduxStoreProtocolMock<ActionType: Sendable, StateType: Sendable>: ReduxStoreProtocol, @unchecked Sendable {
+    var actionHandler: ReduxPipelineWrapper<MiddlewareType>  {
+        underlyingPipeline
+    }
+    
     var pipeline: ReduxPipelineWrapper<MiddlewareType> {
         get { return underlyingPipeline }
         set(value) { underlyingPipeline = value }
@@ -79,7 +83,10 @@ class StateProviderMock<StateType: Sendable>: StateProvider {
     var underlyingStatePublisher: UnfailablePublisherType<StateType>!
 
 }
-final class StoreTypeMock<ActionType: Sendable, StateType: Sendable>: StoreType, @unchecked Sendable {
+final class StoreTypeMock<ActionType: Sendable, StateType: Sendable>: StoreType, ActionHandler, @unchecked Sendable {
+    /// HasActionHandler conformance
+    var actionHandler: StoreTypeMock<ActionType, StateType> { self }
+    
     var statePublisher: UnfailablePublisherType<StateType> {
         get { return underlyingStatePublisher }
         set(value) { underlyingStatePublisher = value }
@@ -100,5 +107,4 @@ final class StoreTypeMock<ActionType: Sendable, StateType: Sendable>: StoreType,
         dispatchReceivedDispatchedAction = dispatchedAction
         dispatchClosure?(dispatchedAction)
     }
-
 }

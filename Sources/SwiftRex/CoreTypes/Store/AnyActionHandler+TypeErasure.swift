@@ -34,7 +34,10 @@ public struct AnyActionHandler<ActionType: Sendable>: SendableActionHandler {
 extension ActionHandler where Self: Sendable {
     /// Erases the provided `ActionHandler` by using its inner methods from a newly created wrapper of type `AnyActionHandler`
     public func eraseToAnyActionHandler() -> AnyActionHandler<ActionType> {
-        AnyActionHandler(self)
+        if let self = self as? AnyActionHandler<ActionType> {
+            return self
+        }
+        return AnyActionHandler(self)
     }
 
     

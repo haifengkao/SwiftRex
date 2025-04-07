@@ -1,7 +1,25 @@
 /// A protocol that defines the two expected roles of a "Store": receive/distribute actions (``ActionHandler``); and publish changes of the the
 /// current app state (``StateProvider``) to possible subscribers. It can be a real store (such as ``ReduxStoreBase``) or just a "proxy" that acts on
 /// behalf of a real store, for example, in the case of ``StoreProjection``.
-public protocol StoreType: StateProvider, SendableActionHandler { }
+public protocol StoreType: StateProvider, HasSendableActionHandler { }
+
+/// To remove Sendable requirement from StoreType
+/// actionHandler should be Sendable, not the store itself
+/// actionHandler should be immutable, otherwise the closures are going to capture the old
+/// actionHandler
+public protocol HasSendableActionHandler: ActionHandler where ActionType == Handler.ActionType {
+    associatedtype Handler: SendableActionHandler
+    
+    var actionHandler: Handler { get }
+}
+
+extension HasSendableActionHandler {
+    
+    @MainActor
+    func dispatch(_ dispatchedAction: DispatchedAction<ActionType>) {
+        self.actionHandler.dispatch(dispatchedAction)
+    }
+}
 
 extension StoreType {
     /// Create another ``StoreType`` that handles a different type of Action. The original store will be used behind the scenes, by only the provided
@@ -14,9 +32,9 @@ extension StoreType {
     public func contramapAction<NewActionType: Sendable>(_ transform: @escaping @Sendable (NewActionType) -> ActionType)
     -> AnyStoreType<NewActionType, StateType> {
         AnyStoreType(
-            action: { dispatchedAction in
+            action: { [actionHandler] dispatchedAction in
                 let oldAction = transform(dispatchedAction.action)
-                self.dispatch(oldAction, from: dispatchedAction.dispatcher)
+                actionHandler.dispatch(oldAction, from: dispatchedAction.dispatcher)
             },
             state: self.statePublisher
         )
@@ -32,7 +50,7 @@ extension StoreType {
     public func mapState<NewStateType>(_ transform: @Sendable @escaping (StateType) -> NewStateType)
     -> AnyStoreType<ActionType, NewStateType> {
         AnyStoreType(
-            action: self.dispatch,
+            action: actionHandler.dispatch,
             state: self.statePublisher.map(transform)
         )
     }

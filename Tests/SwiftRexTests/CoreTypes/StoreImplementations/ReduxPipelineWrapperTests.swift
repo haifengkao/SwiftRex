@@ -200,11 +200,3 @@ class ReduxPipelineWrapperTests: XCTestCase {
         XCTAssertTrue(middlewareRef == nil, "middleware should be freed")
     }
 }
-
-extension SendableActionHandler {
-    func dispatchAsync(_ action: ActionType, from dispatcher: ActionSource = .here()) {
-        Thread.asap {
-            self.dispatch(DispatchedAction(action, dispatcher: dispatcher))
-        }
-    }
-}
