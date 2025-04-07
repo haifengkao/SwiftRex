@@ -46,7 +46,6 @@ extension ActionHandler {
     public func dispatch(_ action: ActionType, from dispatcher: ActionSource) {
         self.dispatch(DispatchedAction(action, dispatcher: dispatcher))
     }
-
 }
 
 extension ActionHandler where Self: Sendable {
@@ -58,7 +57,7 @@ extension ActionHandler where Self: Sendable {
             self.dispatch(dispatchedAction.map(transform))
         }
     }
-    
+
     public func `dispatchAsync`(_ action: ActionType, from dispatcher: ActionSource = .here()) {
         Thread.asap {
             self.dispatch(action, from: dispatcher)

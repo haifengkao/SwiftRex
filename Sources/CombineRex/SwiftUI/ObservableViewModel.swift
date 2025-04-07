@@ -34,10 +34,9 @@ import Foundation
 @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 @Observable
 open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: StoreType {
-    
     private var subscription: SubscriptionType?
     private let store: StoreProjection<ViewAction, ViewState>
-    
+
     /// HasActionHandler conformance
     public var actionHandler: AnyActionHandler<ActionType> {
         store.actionHandler
@@ -68,7 +67,7 @@ open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: Store
             unsubscribe?()
         }
     }
-    
+
     @MainActor
     open func dispatch(_ dispatchedAction: DispatchedAction<ViewAction>) {
         store.dispatch(dispatchedAction)

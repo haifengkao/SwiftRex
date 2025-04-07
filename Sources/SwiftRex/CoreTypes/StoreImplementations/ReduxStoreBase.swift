@@ -85,12 +85,12 @@ import Foundation
 open class ReduxStoreBase<ActionType: Sendable, StateType: Sendable>: ReduxStoreProtocol {
     /// Pipeline to execute upon action arrival, containing all middlewares and reducers
     public let pipeline: ReduxPipelineWrapper<AnyMiddleware<ActionType, ActionType, StateType>>
-    
+
     /// HasActionHandler conformance
     public var actionHandler: ReduxPipelineWrapper<AnyMiddleware<ActionType, ActionType, StateType>> {
         pipeline
     }
-    
+
     /// State publisher which can be subscribed in order to be notified on every mutation
     public let statePublisher: UnfailablePublisherType<StateType>
 

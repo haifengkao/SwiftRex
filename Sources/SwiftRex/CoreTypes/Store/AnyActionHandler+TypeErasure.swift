@@ -39,8 +39,6 @@ extension ActionHandler where Self: Sendable {
         }
         return AnyActionHandler(self)
     }
-
-    
 }
 
 extension Thread {

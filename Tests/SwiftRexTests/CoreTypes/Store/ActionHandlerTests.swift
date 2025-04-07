@@ -3,7 +3,6 @@ import Foundation
 import XCTest
 
 class ActionHandlerTests: XCTestCase {
-    
     @MainActor
     func testDefaultSource() {
         let handleTwice = expectation(description: "should have handled two actions")

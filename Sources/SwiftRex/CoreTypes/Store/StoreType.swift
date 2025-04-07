@@ -9,12 +9,11 @@ public protocol StoreType: StateProvider, HasSendableActionHandler { }
 /// actionHandler
 public protocol HasSendableActionHandler: ActionHandler where ActionType == Handler.ActionType {
     associatedtype Handler: SendableActionHandler
-    
+
     var actionHandler: Handler { get }
 }
 
 extension HasSendableActionHandler {
-    
     @MainActor
     func dispatch(_ dispatchedAction: DispatchedAction<ActionType>) {
         self.actionHandler.dispatch(dispatchedAction)

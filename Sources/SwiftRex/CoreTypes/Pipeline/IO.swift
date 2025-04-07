@@ -7,7 +7,7 @@ public struct IO<OutputActionType: Sendable> {
     public init(_ run: @escaping (AnyActionHandler<OutputActionType>) -> Void) {
         self.runIOs = [run]
     }
-    
+
     // Internal initializer with an array of actions
     fileprivate init(runIOs: [(AnyActionHandler<OutputActionType>) -> Void]) {
         self.runIOs = runIOs
