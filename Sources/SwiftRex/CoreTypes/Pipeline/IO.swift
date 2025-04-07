@@ -1,22 +1,31 @@
 import Foundation
 
 public struct IO<OutputActionType: Sendable> {
-    private let runIO: (AnyMainActorActionHandler<OutputActionType>) -> Void
+    // Store an array of runIO to be executed
+    fileprivate let runIOs: [(AnyMainActorActionHandler<OutputActionType>) -> Void]
 
     public init(_ run: @escaping (AnyMainActorActionHandler<OutputActionType>) -> Void) {
-        self.runIO = run
+        self.runIOs = [run]
+    }
+    
+    // Internal initializer with an array of actions
+    fileprivate init(runIOs: [(AnyMainActorActionHandler<OutputActionType>) -> Void]) {
+        self.runIOs = runIOs
     }
 
     public static func pure() -> IO {
-        IO { _ in }
+        IO(runIOs: [])
     }
 
     public func run(_ output: AnyMainActorActionHandler<OutputActionType>) {
-        runIO(output)
+        // Execute all runIO sequentially with the same output handler
+        for runIO in runIOs {
+            runIO(output)
+        }
     }
 
-    public func run (_ output: @MainActor @escaping (DispatchedAction<OutputActionType>) -> Void) {
-        runIO(.init(output))
+    public func run(_ output: @MainActor @escaping (DispatchedAction<OutputActionType>) -> Void) {
+        run(.init(output))
     }
 }
 
@@ -25,10 +34,8 @@ extension IO: Monoid {
 }
 
 public func <> <OutputActionType>(lhs: IO<OutputActionType>, rhs: IO<OutputActionType>) -> IO<OutputActionType> {
-    .init { handler in
-        lhs.run(handler)
-        rhs.run(handler)
-    }
+    // Combine arrays of runIO instead of nesting calls
+    .init(runIOs: lhs.runIOs + rhs.runIOs)
 }
 
 extension IO {
