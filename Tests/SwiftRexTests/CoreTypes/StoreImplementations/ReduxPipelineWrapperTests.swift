@@ -201,7 +201,7 @@ class ReduxPipelineWrapperTests: XCTestCase {
     }
 }
 
-extension MainActorActionHandler {
+extension SendableMainActorActionHandler {
     func dispatchAsync(_ action: ActionType, from dispatcher: ActionSource = .here()) {
         Thread.asap {
             self.dispatch(DispatchedAction(action, dispatcher: dispatcher))
