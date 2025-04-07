@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ReduxPipelineWrapper<MiddlewareType: MiddlewareProtocol>: ActionHandler, Sendable
+public struct ReduxPipelineWrapper<MiddlewareType: MiddlewareProtocol>: SendableActionHandler
 where MiddlewareType.InputActionType == MiddlewareType.OutputActionType {
     public typealias ActionType = MiddlewareType.InputActionType
     public typealias StateType = MiddlewareType.StateType

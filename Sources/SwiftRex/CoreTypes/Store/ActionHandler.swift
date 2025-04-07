@@ -13,10 +13,11 @@ public protocol ActionHandler {
     /// Also way for a `Middleware` to trigger their own actions, usually in response to events or async operations.
     /// - Parameter dispatchedAction: container for action (the action to be dispatched) + dispatcher (information about the action source,
     ///                               containing file/line, function and additional information for debugging and logging purposes)/
+    @MainActor
     func dispatch(_ dispatchedAction: DispatchedAction<ActionType>)
 }
 
-public protocol SendableActionHandler: ActionHandler, Sendable {}
+public typealias SendableActionHandler = ActionHandler & Sendable
 
 extension ActionHandler {
     /// The function that allows Views, ViewControllers, Presenters to dispatch actions to the store.
