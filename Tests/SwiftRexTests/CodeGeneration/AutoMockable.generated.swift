@@ -21,7 +21,7 @@ import AppKit
 
 
 
-final class ActionHandlerMock<ActionType: Sendable>: ActionHandler, @unchecked Sendable {
+final class ActionHandlerMock<ActionType: Sendable>: SendableActionHandler, @unchecked Sendable {
 
     //MARK: - dispatch
 

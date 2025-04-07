@@ -3,6 +3,7 @@ import Foundation
 import XCTest
 
 class ActionHandlerTypeErasureTests: XCTestCase {
+    @MainActor
     func testActionHandlerMockErased() {
         let mock = ActionHandlerMock<String>()
         let sut = mock.eraseToAnyActionHandler()
@@ -24,7 +25,7 @@ class ActionHandlerTypeErasureTests: XCTestCase {
     @MainActor
     func testActionHandlerClosureErased() {
         var actions: [String] = []
-        let sut = AnyMainActorActionHandler { dispatchedAction in
+        let sut = AnyActionHandler { dispatchedAction in
             actions.append(dispatchedAction.action)
         }
 
@@ -40,10 +41,10 @@ class ActionHandlerTypeErasureTests: XCTestCase {
     @MainActor
     func testActionHandlerContramap() {
         var actions: [String] = []
-        let stringHandler = AnyMainActorActionHandler<String> { dispatchedAction in
+        let stringHandler = AnyActionHandler<String> { dispatchedAction in
             actions.append(dispatchedAction.action)
         }
-        let intHandler: AnyMainActorActionHandler<Int> = stringHandler.contramap { "\($0)" }
+        let intHandler: AnyActionHandler<Int> = stringHandler.contramap { "\($0)" }
 
         intHandler.dispatch(1, from: .here())
         intHandler.dispatch(2, from: .here())

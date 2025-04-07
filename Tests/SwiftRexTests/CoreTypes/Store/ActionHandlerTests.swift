@@ -3,16 +3,18 @@ import Foundation
 import XCTest
 
 class ActionHandlerTests: XCTestCase {
+    
+    @MainActor
     func testDefaultSource() {
         let handleTwice = expectation(description: "should have handled two actions")
         handleTwice.expectedFulfillmentCount = 2
         let sut = AnyActionHandler<String> { dispatchedAction in
             switch dispatchedAction.action {
             case "1":
-                XCTAssertEqual(dispatchedAction.dispatcher.line, 24)
+                XCTAssertEqual(dispatchedAction.dispatcher.line, 26)
                 XCTAssertNil(dispatchedAction.dispatcher.info)
             case "2":
-                XCTAssertEqual(dispatchedAction.dispatcher.line, 26)
+                XCTAssertEqual(dispatchedAction.dispatcher.line, 28)
                 XCTAssertEqual(dispatchedAction.dispatcher.info, "second")
             default: XCTFail("Too many actions")
             }

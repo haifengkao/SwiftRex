@@ -26,7 +26,7 @@ class StoreTypeTypeErasureTests: XCTestCase {
     @MainActor
     func testActionHandlerClosureErased() {
         var actions: [String] = []
-        let actionHandler: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+        let actionHandler: AnyActionHandler<String> = .init { dispatchedAction in
             actions.append(dispatchedAction.action)
         }
         let sut = AnyStoreType<String, Void>(
@@ -45,14 +45,14 @@ class StoreTypeTypeErasureTests: XCTestCase {
 
     func testActionHandlerContramap() {
         var actions: [String] = []
-        let actionHandler: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+        let actionHandler: AnyActionHandler<String> = .init { dispatchedAction in
             actions.append(dispatchedAction.action)
         }
         let stringHandler = AnyStoreType<String, Never>(
             actionHandler: actionHandler,
             state: .init(subscribe: { _ in preconditionFailure("no state when it's never") })
         )
-        let intHandler: AnyMainActorActionHandler<Int> = stringHandler.contramap { "\($0)" }
+        let intHandler: AnyActionHandler<Int> = stringHandler.contramap { "\($0)" }
 
         intHandler.dispatch(1, from: .here())
         intHandler.dispatch(2, from: .here())
@@ -69,7 +69,7 @@ class StoreTypeTypeErasureTests: XCTestCase {
             subscriber.onValue(true)
             return FooSubscription()
         }
-        let actionHandler: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+        let actionHandler: AnyActionHandler<String> = .init { dispatchedAction in
             actions.append(dispatchedAction.action)
         }
         let stringHandler = AnyStoreType<String, Bool>(

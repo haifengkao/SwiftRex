@@ -17,7 +17,7 @@ class ReduxStoreBaseTests: XCTestCase {
         let events: [AppAction] = [.foo, .bar(.charlie), .foo]
         let initialState = TestState()
         let fooMiddleware = IsoMiddlewareMock<AppAction, TestState>()
-        var fooMiddlewareOutput: AnyMainActorActionHandler<AppAction>?
+        var fooMiddlewareOutput: AnyActionHandler<AppAction>?
 
         fooMiddleware.handleActionFromStateClosure = { action, _, _ in
             guard action == .foo else {
@@ -33,7 +33,7 @@ class ReduxStoreBaseTests: XCTestCase {
             }
         }
         let barMiddleware = IsoMiddlewareMock<AppAction.Bar, String>()
-        var barMiddlewareOutput: AnyMainActorActionHandler<AppAction.Bar>?
+        var barMiddlewareOutput: AnyActionHandler<AppAction.Bar>?
 
         barMiddleware.handleActionFromStateClosure = { action, _, _ in
             switch action {

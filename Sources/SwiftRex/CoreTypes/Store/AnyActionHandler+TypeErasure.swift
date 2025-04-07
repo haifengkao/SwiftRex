@@ -1,22 +1,22 @@
 import Foundation
 
-/// `MainActorActionHandler` defines a protocol for entities able to handle actions - defined by the associated type `ActionType`
-///  and `AnyMainActorActionHandler` erases this protocol to a generic struct type.
+/// `ActionHandler` defines a protocol for entities able to handle actions - defined by the associated type `ActionType`
+///  and `AnyActionHandler` erases this protocol to a generic struct type.
 ///
 /// The only protocol requirement is a function that allows other entities to dispatch actions, so Views (or Presenters,
 /// ViewModels) in your UI layer, or even Middlewares can create actions of a certain type and send to your store, that
 /// is generalized by this protocol.
-public struct AnyMainActorActionHandler<ActionType: Sendable>: SendableMainActorActionHandler {
+public struct AnyActionHandler<ActionType: Sendable>: SendableActionHandler {
     private let realHandler: @MainActor (DispatchedAction<ActionType>) -> Void
 
-    /// Erases the provided `MainActorActionHandler` by using its inner methods from this wrapper
-    /// - Parameter realHandler: the concrete `MainActorActionHandler` you're erasing
-    public init<A: SendableMainActorActionHandler>(_ realHandler: A) where A.ActionType == ActionType {
+    /// Erases the provided `ActionHandler` by using its inner methods from this wrapper
+    /// - Parameter realHandler: the concrete `ActionHandler` you're erasing
+    public init<A: SendableActionHandler>(_ realHandler: A) where A.ActionType == ActionType {
         self.init(realHandler.dispatch)
     }
 
-    /// Erases the any type that implements the `dispatch` function to act as a `MainActorActionHandler`
-    /// - Parameter realHandler: a function with the same signature of `MainActorActionHandler.dispatch`
+    /// Erases the any type that implements the `dispatch` function to act as a `ActionHandler`
+    /// - Parameter realHandler: a function with the same signature of `ActionHandler.dispatch`
     public init(_ realHandler: @MainActor @escaping (DispatchedAction<ActionType>) -> Void) {
         self.realHandler = realHandler
     }
@@ -31,19 +31,13 @@ public struct AnyMainActorActionHandler<ActionType: Sendable>: SendableMainActor
     }
 }
 
-extension SendableMainActorActionHandler {
-    /// Erases the provided `MainActorActionHandler` by using its inner methods from a newly created wrapper of type `AnyActionHandler`
-    public func eraseAnyMainActorActionHandler() -> AnyMainActorActionHandler<ActionType> {
-        AnyMainActorActionHandler(self)
+extension SendableActionHandler {
+    /// Erases the provided `ActionHandler` by using its inner methods from a newly created wrapper of type `AnyActionHandler`
+    public func eraseToAnyActionHandler() -> AnyActionHandler<ActionType> {
+        AnyActionHandler(self)
     }
 
-    public func eraseAnyActionHandler() -> AnyActionHandler<ActionType> {
-        AnyActionHandler { output in
-            Thread.asap {
-                self.dispatch(output)
-            }
-        }
-    }
+    
 }
 
 extension Thread {

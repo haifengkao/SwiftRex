@@ -9,8 +9,8 @@ class LiftComposedMiddlewareTests: XCTestCase {
 extension LiftComposedMiddlewareTests {
     func testLiftMiddlewareInputActionOutputActionInputState_OutputActionsAreForwardedToGlobalContext() {
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
-        let localDispatcher: AnyMainActorActionHandler<AppAction.Bar> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let localDispatcher: AnyActionHandler<AppAction.Bar> = .init { dispatchedAction in
             globalDispatcher.dispatch(AppAction.bar(dispatchedAction.action), from: dispatchedAction.dispatcher)
         }
 
@@ -90,8 +90,8 @@ extension LiftComposedMiddlewareTests {
 extension LiftComposedMiddlewareTests {
     func testLiftMiddlewareInputActionOutputAction_OutputActionsAreForwardedToGlobalContext() {
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
-        let localDispatcher: AnyMainActorActionHandler<AppAction.Bar> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let localDispatcher: AnyActionHandler<AppAction.Bar> = .init { dispatchedAction in
             globalDispatcher.dispatch(.bar(dispatchedAction.action), from: dispatchedAction.dispatcher)
         }
 
@@ -168,9 +168,9 @@ extension LiftComposedMiddlewareTests {
 // MARK: - Lifting 2 properties at once: Input Action, State
 extension LiftComposedMiddlewareTests {
     func testLiftMiddlewareInputActionInputState_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyMainActorActionHandler<AppAction>?
+        var localDispatcher: AnyActionHandler<AppAction>?
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
         let nameMiddleware = MiddlewareMock<AppAction.Bar, AppAction, String>()
         let composed = nameMiddleware <> IdentityMiddleware()
         let generalMiddleware =
@@ -248,8 +248,8 @@ extension LiftComposedMiddlewareTests {
 extension LiftComposedMiddlewareTests {
     func testLiftMiddlewareOutputActionInputState_OutputActionsAreForwardedToGlobalContext() {
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
-        let localDispatcher: AnyMainActorActionHandler<AppAction.Bar> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let localDispatcher: AnyActionHandler<AppAction.Bar> = .init { dispatchedAction in
             globalDispatcher.dispatch(AppAction.bar(dispatchedAction.action), from: dispatchedAction.dispatcher)
         }
 
@@ -327,8 +327,8 @@ extension LiftComposedMiddlewareTests {
 extension LiftComposedMiddlewareTests {
     func testLiftMiddlewareInputAction_OutputActionsAreForwardedToGlobalContext() {
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
-        let localDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let localDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in
             globalDispatcher.dispatch(dispatchedAction.action, from: dispatchedAction.dispatcher)
         }
 
@@ -404,8 +404,8 @@ extension LiftComposedMiddlewareTests {
 extension LiftComposedMiddlewareTests {
     func testLiftMiddlewareOutputAction_OutputActionsAreForwardedToGlobalContext() {
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
-        let localDispatcher: AnyMainActorActionHandler<AppAction.Bar> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let localDispatcher: AnyActionHandler<AppAction.Bar> = .init { dispatchedAction in
             globalDispatcher.dispatch(AppAction.bar(dispatchedAction.action), from: dispatchedAction.dispatcher)
         }
 
@@ -481,8 +481,8 @@ extension LiftComposedMiddlewareTests {
 extension LiftComposedMiddlewareTests {
     func testLiftMiddlewareInputState_OutputActionsAreForwardedToGlobalContext() {
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
-        let localDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let localDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in
             globalDispatcher.dispatch(dispatchedAction.action, from: dispatchedAction.dispatcher)
         }
         let nameMiddleware = MiddlewareMock<AppAction, AppAction, String>()

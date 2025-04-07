@@ -8,9 +8,9 @@ class LiftAnyMiddlewareWrappingComposedTests: XCTestCase {
 // MARK: - Lifting 3 properties at once
 extension LiftAnyMiddlewareWrappingComposedTests {
     func testLiftMiddlewareInputActionOutputActionInputState_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyMainActorActionHandler<AppAction.Bar>?
+        var localDispatcher: AnyActionHandler<AppAction.Bar>?
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -93,9 +93,9 @@ extension LiftAnyMiddlewareWrappingComposedTests {
 // MARK: - Lifting 2 properties at once: Input Action, Output Action
 extension LiftAnyMiddlewareWrappingComposedTests {
     func testLiftMiddlewareInputActionOutputAction_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyMainActorActionHandler<AppAction.Bar>?
+        var localDispatcher: AnyActionHandler<AppAction.Bar>?
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
 
         let nameMiddleware = IsoMiddlewareMock<AppAction.Bar, TestState>()
         let composed = (nameMiddleware <> IdentityMiddleware()).eraseToAnyMiddleware()
@@ -174,9 +174,9 @@ extension LiftAnyMiddlewareWrappingComposedTests {
 // MARK: - Lifting 2 properties at once: Input Action, State
 extension LiftAnyMiddlewareWrappingComposedTests {
     func testLiftMiddlewareInputActionInputState_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyMainActorActionHandler<AppAction>?
+        var localDispatcher: AnyActionHandler<AppAction>?
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
         let nameMiddleware = MiddlewareMock<AppAction.Bar, AppAction, String>()
         let composed = (nameMiddleware <> IdentityMiddleware()).eraseToAnyMiddleware()
         let generalMiddleware =
@@ -255,9 +255,9 @@ extension LiftAnyMiddlewareWrappingComposedTests {
 // MARK: - Lifting 2 properties at once: Output Action, State
 extension LiftAnyMiddlewareWrappingComposedTests {
     func testLiftMiddlewareOutputActionInputState_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyMainActorActionHandler<AppAction.Bar>?
+        var localDispatcher: AnyActionHandler<AppAction.Bar>?
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
 
         let nameMiddleware = MiddlewareMock<AppAction, AppAction.Bar, String>()
         let composed = (nameMiddleware <> IdentityMiddleware()).eraseToAnyMiddleware()
@@ -336,9 +336,9 @@ extension LiftAnyMiddlewareWrappingComposedTests {
 // MARK: - Lifting a single property: Input Action
 extension LiftAnyMiddlewareWrappingComposedTests {
     func testLiftMiddlewareInputAction_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyMainActorActionHandler<AppAction>?
+        var localDispatcher: AnyActionHandler<AppAction>?
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
 
         let nameMiddleware = MiddlewareMock<AppAction.Bar, AppAction, TestState>()
         let composed = (nameMiddleware <> IdentityMiddleware()).eraseToAnyMiddleware()
@@ -415,9 +415,9 @@ extension LiftAnyMiddlewareWrappingComposedTests {
 // MARK: - Lifting a single property: Output Action
 extension LiftAnyMiddlewareWrappingComposedTests {
     func testLiftMiddlewareOutputAction_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyMainActorActionHandler<AppAction.Bar>?
+        var localDispatcher: AnyActionHandler<AppAction.Bar>?
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
 
         let nameMiddleware = MiddlewareMock<AppAction, AppAction.Bar, TestState>()
         let composed = (nameMiddleware <> IdentityMiddleware()).eraseToAnyMiddleware()
@@ -494,9 +494,9 @@ extension LiftAnyMiddlewareWrappingComposedTests {
 // MARK: - Lifting a single property: State
 extension LiftAnyMiddlewareWrappingComposedTests {
     func testLiftMiddlewareInputState_OutputActionsAreForwardedToGlobalContext() {
-        var localDispatcher: AnyMainActorActionHandler<AppAction>?
+        var localDispatcher: AnyActionHandler<AppAction>?
         var globalReceived: [AppAction] = []
-        let globalDispatcher: AnyMainActorActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
+        let globalDispatcher: AnyActionHandler<AppAction> = .init { dispatchedAction in globalReceived.append(dispatchedAction.action) }
 
         let nameMiddleware = MiddlewareMock<AppAction, AppAction, String>()
         let composed = (nameMiddleware <> IdentityMiddleware()).eraseToAnyMiddleware()

@@ -2,14 +2,14 @@ import Foundation
 
 public struct IO<OutputActionType: Sendable> {
     // Store an array of runIO to be executed
-    fileprivate let runIOs: [(AnyMainActorActionHandler<OutputActionType>) -> Void]
+    fileprivate let runIOs: [(AnyActionHandler<OutputActionType>) -> Void]
 
-    public init(_ run: @escaping (AnyMainActorActionHandler<OutputActionType>) -> Void) {
+    public init(_ run: @escaping (AnyActionHandler<OutputActionType>) -> Void) {
         self.runIOs = [run]
     }
     
     // Internal initializer with an array of actions
-    fileprivate init(runIOs: [(AnyMainActorActionHandler<OutputActionType>) -> Void]) {
+    fileprivate init(runIOs: [(AnyActionHandler<OutputActionType>) -> Void]) {
         self.runIOs = runIOs
     }
 
@@ -17,7 +17,7 @@ public struct IO<OutputActionType: Sendable> {
         IO(runIOs: [])
     }
 
-    public func run(_ output: AnyMainActorActionHandler<OutputActionType>) {
+    public func run(_ output: AnyActionHandler<OutputActionType>) {
         // Execute all runIO sequentially with the same output handler
         for runIO in runIOs {
             runIO(output)

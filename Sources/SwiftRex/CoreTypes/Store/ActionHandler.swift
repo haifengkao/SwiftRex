@@ -1,3 +1,4 @@
+import Foundation
 /**
  `ActionHandler` defines a protocol for entities able to handle actions - defined by the associated type `ActionType`.
 
@@ -5,7 +6,7 @@
  ViewModels) in your UI layer, or even Middlewares can create actions of a certain type and send to your store, that
  is generalized by this protocol.
  */
-public protocol ActionHandler: Sendable {
+public protocol ActionHandler {
     associatedtype ActionType: Sendable
 
     /// The function that allows Views, ViewControllers, Presenters to dispatch actions to the store.
@@ -14,6 +15,8 @@ public protocol ActionHandler: Sendable {
     ///                               containing file/line, function and additional information for debugging and logging purposes)/
     func dispatch(_ dispatchedAction: DispatchedAction<ActionType>)
 }
+
+public protocol SendableActionHandler: ActionHandler, Sendable {}
 
 extension ActionHandler {
     /// The function that allows Views, ViewControllers, Presenters to dispatch actions to the store.
@@ -27,6 +30,7 @@ extension ActionHandler {
     ///   - info: Additional information about the moment where the action was dispatched. This is an optional String that can hold information
     ///           useful for debugging, logging, monitoring or analytics. By default this is nil but you can add any information useful to trace
     ///           the journey of this action.
+    @MainActor
     public func dispatch(_ action: ActionType, file: String = #file, function: String = #function, line: UInt = #line, info: String? = nil) {
         self.dispatch(action, from: .init(file: file, function: function, line: line, info: info))
     }
@@ -37,18 +41,26 @@ extension ActionHandler {
     ///   - action: the action to be dispatched
     ///   - dispatcher: information about the action source, containing file/line, function and additional information for debugging and logging
     ///                 purposes
+    @MainActor
     public func dispatch(_ action: ActionType, from dispatcher: ActionSource) {
         self.dispatch(DispatchedAction(action, dispatcher: dispatcher))
     }
+
 }
 
-extension ActionHandler {
+extension ActionHandler where Self: Sendable {
     /// Pullback an `ActionHandler` working in a local action context, into a new `ActionHandler` working in a more global action context.
     /// - Parameter transform: a function that allows to go from a global action to a local action
     /// - Returns: a new `ActionHandler` that knows how to handle the new action type
-    public func contramap<NewActionType>(_ transform: @Sendable @escaping (NewActionType) -> ActionType) -> AnyActionHandler<NewActionType> {
-        AnyActionHandler { dispatchedAction in
+    public func contramap<NewActionType>(_ transform: @escaping @Sendable (NewActionType) -> ActionType) -> AnyActionHandler<NewActionType> {
+        AnyActionHandler { [self] dispatchedAction in
             self.dispatch(dispatchedAction.map(transform))
+        }
+    }
+    
+    public func `dispatchAsync`(_ action: ActionType, from dispatcher: ActionSource = .here()) {
+        Thread.asap {
+            self.dispatch(action, from: dispatcher)
         }
     }
 }

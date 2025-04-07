@@ -33,7 +33,7 @@ import Foundation
 /// ```
 @available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *)
 @Observable
-open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: StateProvider, MainActorActionHandler {
+open class ObservableViewModel<ViewAction: Sendable, ViewState: Sendable>: StateProvider, ActionHandler {
     private var subscription: SubscriptionType?
     private let store: StoreProjection<ViewAction, ViewState>
 

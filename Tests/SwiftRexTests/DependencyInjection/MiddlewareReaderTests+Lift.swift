@@ -24,7 +24,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -74,7 +74,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -122,7 +122,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -170,7 +170,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -218,7 +218,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -267,7 +267,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -314,7 +314,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -361,7 +361,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -408,7 +408,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -455,7 +455,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -502,7 +502,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -550,7 +550,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -596,7 +596,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [String] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<String> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<String> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -642,7 +642,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
@@ -688,7 +688,7 @@ extension MiddlewareReaderTests {
         let localOutputActions = self.localOutputActions
         var globalReceived: [Int] = []
         var receivedLocalInputActions = [String]()
-        let globalDispatcher: AnyMainActorActionHandler<Int> = .init { dispatchedAction in
+        let globalDispatcher: AnyActionHandler<Int> = .init { dispatchedAction in
             globalReceived.append(dispatchedAction.action)
         }
 
