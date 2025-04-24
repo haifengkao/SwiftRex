@@ -10,10 +10,10 @@ class ActionHandlerTests: XCTestCase {
         let sut = AnyActionHandler<String> { dispatchedAction in
             switch dispatchedAction.action {
             case "1":
-                XCTAssertEqual(dispatchedAction.dispatcher.line, 26)
+                XCTAssertEqual(dispatchedAction.dispatcher.line, 25)
                 XCTAssertNil(dispatchedAction.dispatcher.info)
             case "2":
-                XCTAssertEqual(dispatchedAction.dispatcher.line, 28)
+                XCTAssertEqual(dispatchedAction.dispatcher.line, 27)
                 XCTAssertEqual(dispatchedAction.dispatcher.info, "second")
             default: XCTFail("Too many actions")
             }

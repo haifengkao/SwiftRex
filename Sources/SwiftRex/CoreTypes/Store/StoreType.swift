@@ -3,10 +3,15 @@
 /// behalf of a real store, for example, in the case of ``StoreProjection``.
 public protocol StoreType: StateProvider, HasSendableActionHandler { }
 
+/// Automatic conformance to HasSendableActionHandler
+/// when StoreType is ActionHandler and Sendable
+extension StoreType where Self: SendableActionHandler {
+    var actionHandler: Self { self }
+}
+
 /// To remove Sendable requirement from StoreType
 /// actionHandler should be Sendable, not the store itself
-/// actionHandler should be immutable, otherwise the closures are going to capture the old
-/// actionHandler
+/// actionHandler should be immutable (it is in current implementation), otherwise the closures are going to capture the old actionHandler
 public protocol HasSendableActionHandler: ActionHandler where ActionType == Handler.ActionType {
     associatedtype Handler: SendableActionHandler
 

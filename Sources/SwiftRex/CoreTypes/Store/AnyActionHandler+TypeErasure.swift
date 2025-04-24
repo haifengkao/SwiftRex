@@ -41,6 +41,12 @@ extension ActionHandler where Self: Sendable {
     }
 }
 
+extension HasSendableActionHandler {
+    public func eraseToAnyActionHandler() -> AnyActionHandler<ActionType> {
+        self.actionHandler.eraseToAnyActionHandler()
+    }
+}
+
 extension Thread {
     static func asap(_ block: @MainActor @escaping () -> Void) {
         if Thread.isMainThread {

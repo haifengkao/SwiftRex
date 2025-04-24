@@ -84,8 +84,6 @@ class StateProviderMock<StateType: Sendable>: StateProvider {
 
 }
 final class StoreTypeMock<ActionType: Sendable, StateType: Sendable>: StoreType, ActionHandler, @unchecked Sendable {
-    /// HasActionHandler conformance
-    var actionHandler: StoreTypeMock<ActionType, StateType> { self }
     
     var statePublisher: UnfailablePublisherType<StateType> {
         get { return underlyingStatePublisher }

@@ -65,6 +65,16 @@ extension ActionHandler where Self: Sendable {
     }
 }
 
+public extension HasSendableActionHandler {
+    func contramap<NewActionType>(_ transform: @escaping @Sendable (NewActionType) -> ActionType) -> AnyActionHandler<NewActionType> {
+        actionHandler.contramap(transform)
+    }
+
+    func dispatchAsync(_ action: ActionType, from dispatcher: ActionSource = .here()) {
+        actionHandler.dispatchAsync(action, from: dispatcher)
+    }
+}
+
 // sourcery: AutoMockable
 // sourcery: AutoMockableGeneric = ActionType
 extension ActionHandler { }
